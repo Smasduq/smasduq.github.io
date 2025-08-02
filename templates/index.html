@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Smasduq offers editing clips, Alight Motion editing XMLs, Football clips, Cars editing clips and Backgrounds for free.">
+    <meta name="keywords" content="smasduq, edit, editing, clips, football, cars, anime, manga, alight, motion, xml, download">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" href="static/smasduq.png" type="image/png">
+    <link rel="stylesheet" href="hhtps://fonts.googleapis.com/css?family=Press+Start+2P">
+
+    <title>Smasduq - Get free Anime clips, Manga clips and Alight Motion XMLs her</title>
+</head>
+<body>
+    <header>
+        <nav class="nav-bar">
+            <div class="nav-div">
+              <h1>TheOnlySmasduq</h1>
+            </div>
+        </nav>
+    </header>
+    <hr>
+    <main>
+        {% block body %}
+        <div class="container1">
+            <h1>WELCOME</h1>
+            <p>This website is created by Smasduq.</p>
+
+            <marquee behavior="" direction="">WELCOME TO MY WRLD</marquee>
+
+            <a href="{{ url_for('home') }}"><button class="start-now" >Continue</button></a>
+
+        </div>
+        <div class="container">
+            <div class="box">
+                <h2>What is this website for?</h2>
+                <p>You can:</p>
+                <li>Download Anime clips</li>
+                <li>Download Manga clips</li>
+                <li>Backgrounds</li>
+                <li>Download Football clips</li>
+                <li>Download Cars clips</li>
+            </div>
+        </div>
+        <div class="container2">
+            <div class="box2">
+                <p>All files are available in only ZIP</p>
+            </div>
+        </div>
+        
+        {% endblock %}
+    </main>
+    <hr>
+    <footer>
+        <p>Copyright &copy; - <b>Smasduq</b> 2025</p>
+    </footer>
+</body>
+</html>

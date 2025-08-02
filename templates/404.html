@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='smasduq.png') }}" type="image/png">
+
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+
+
+
+    <title>Page not found - Smasduq</title>
+</head>
+<body>
+    <header>
+        
+        
+    </header>
+    <main>
+        <div class="page404">
+            <h1 id="head404">404</h1>
+            <h2>Page not found.</h2>
+            <p id="p404">The page URL you entered doesn't exist or is not found. Return to <a href="{{ url_for('home') }}" id="a404">home</a>.</p>
+            <a href="https://www.instagram.com/s.masduq?igsh=OWszNDQIOGx0czVo" target="_blank"><i class="fab fa-instagram instagram"></i></a>
+            <a href="https://youtube.com/@smasduq?si=CfZYdCopGAoR_k82" target="_blank"><i class="fab fa-youtube youtube"></i></a>
+            <a href="https://github.com/smasduq" target="_blank"><i class="fab fa-github github"></i></a>
+        </div>
+        
+        
+    </main>
+    
+    <script>
+        const shownav = document.querySelector('.ham-menu');
+
+        const nav = document.querySelector('.off-screen-menu');
+
+        shownav.addEventListener('click', () =>  {
+            shownav.classList.toggle('active');
+        nav.classList.toggle('active');
+        })
+    </script>
+</body>
+</html>

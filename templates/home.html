@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='smasduq.png') }}" type="image/png">
+
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+
+
+
+    <title>{% block title %}Smasduq - Home {% endblock %}</title>
+</head>
+<body>
+    <header>
+        
+        <nav>
+            <label id="logo">TheOnlySmasduq</label>
+            <div class="ham-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+                <div class="off-screen-menu">
+                    <ul>
+                        <li><a href="{{ url_for('home') }}">Home</a></li>
+                        <li><a href="{{ url_for('download') }}">Download</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                        <li><a href="{{ url_for('support') }}">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <h2 class="welcome">Welcome</h2>
+
+        <p>You can have fun here.</p>
+
+        <div class="container">
+            <div class="box">
+                <h2>Support Me</h2>
+                <p>Click the bellow button to support me.</p>
+                <a href="{{ url_for('support') }}"><button class="support-btn btn">Support Me</button></a>
+            </div>
+        </div>
+
+        
+    </main>
+    <footer>
+       
+        <div class="bottom-link-wa">
+            <h4>WhatsApp</h4>
+            <a href="https://whatsapp.com/channel/0029VaiFe4JBPzjZVXXUVr0E" target="_blank">Join my WhatsApp channel</a>
+        </div>
+        <div class="bottom-link-tg">
+            <h4>Telegram</h4>
+            <a href="">Join my Telegram channel</a>
+        </div>
+        <div class="bottom-icon">
+            <a href="https://www.instagram.com/s.masduq?igsh=OWszNDQIOGx0czVo" target="_blank"><i class="fab fa-instagram instagram"></i></a>
+            <a href="https://youtube.com/@smasduq?si=CfZYdCopGAoR_k82" target="_blank"><i class="fab fa-youtube youtube"></i></a>
+            <a href="https://github.com/smasduq" target="_blank"><i class="fab fa-github github"></i></a>
+        </div>
+        <p>Subscribe to my YouTube channel please.</p>
+    </footer>
+    <script>
+        const shownav = document.querySelector('.ham-menu');
+
+        const nav = document.querySelector('.off-screen-menu');
+
+        shownav.addEventListener('click', () =>  {
+            shownav.classList.toggle('active');
+        nav.classList.toggle('active');
+        })
+    </script>
+</body>
+</html>

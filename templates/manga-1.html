@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="120">
+    <meta name="description" content="Download Anime, Manga and Cars clips for edit.">
+    <meta name="keywords" content="smasduq, anime, manga, edit, edits, car, cars, clip, clips, gojo, sukuna, luffy, zoro, sung, jin, woo, solo, levelling, jjk, Smasduq, TheOnlySmasduq, BMW, mercedes, toyota, background, for">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='manga-1.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='smasduq.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <title>Smasduq - Download Manga</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <label id="logo">TheOnlySmasduq</label>
+            <div class="ham-menu navbar-toggler" type="button">
+                <span></span>
+                <span></span>
+                <span></span>
+                <div class="off-screen-menu">
+                    <ul>
+                        <li><a href="{{ url_for('home') }}">Home</a></li>
+                        <li><a href="{{ url_for('download') }}">Download</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                        <li><a href="{{ url_for('support') }}">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <h1 class="tit">MANGA</h1>
+        <input type="search" id="search" placeholder="Search">
+        <div class="all" id="all1">
+            <a href="{{ url_for('sukuna_mg') }}" class="clips-bg">
+                <span class="name">SUKUNA</span> 
+                <p>Tap the button below to start the download:</p>
+            </a>
+            <a href="{{ url_for('gojo_mg') }}" class="clips-bg">
+                <span class="name">SATORU GOJO</span> 
+                <p>Tap the button below to start the download:</p>
+            </a>
+            <a href="{{ url_for('goku_mg') }}"  class="clips-bg">
+                <span class="name">GOKU</span>
+                <p>Tap the button below to start the download:</p>
+            </a>
+            <a href="{{ url_for('yuta_mg') }}" class="clips-bg">
+                <span class="name">YUTA OKOTSU</span>
+                <p>Tap the button below to start the download:</p>
+            </a>
+            <a href="{{ url_for('luffy_mg') }}" class="clips-bg">
+                <span class="name">MONKEY D. LUFFY</span>
+                <p>Tap the button below to start the download:</p>
+            </a>
+            <a href="{{ url_for('isagi_mg') }}" class="clips-bg">
+                <span class="name">ISAGI YOICHI</span> 
+                <p>Tap the button below to start the download:</p>    
+            </a>
+            <a href="{{ url_for('saitama_mg') }}" class="clips-bg">
+                <span class="name">SAITAMA</span>
+                <p>Tap the button below to start the download:</p>
+            </a>
+            <a href="{{ url_for('nagi_mg') }}" class="clips-bg">
+                <span class="name">NAGI SEISHIRO</span> 
+                <p>Tap the button below to start the download:</p>
+            </a>
+            <a href="{{ url_for('sae_mg') }}" class="clips-bg">
+                <span class="name">SAE ITOSHI</span>
+                <p>Tap the button below to start the download:</p>
+            </a>
+            <a href="{{ url_for('rin_mg') }}" class="clips-bg">
+                <span class="name">RIN ITOSHI</span>
+                <p>Tap the button below to start the download:</p>
+            </a>
+            <a href="{{ url_for('aizen_mg') }}" class="clips-bg">
+                <span class="name">AIZEN SOUSUKE</span>
+                <p>Tap the button below to start the download:</p>
+            </a>
+        </div>
+    </main>
+    
+
+    <script>
+        const shownav = document.querySelector('.ham-menu');
+
+        const nav = document.querySelector('.off-screen-menu');
+
+        const main = document.querySelector('.all'); 
+
+        const menuLinks = document.querySelectorAll('.off-screen-menu a'); 
+
+        shownav.addEventListener('click', () =>  {
+            shownav.classList.toggle('active');
+            nav.classList.toggle('active');
+
+            if (main.style.display === 'none') {
+                main.style.display = 'grid';
+            } else {
+                main.style.display = 'none';
+            }
+        });
+
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                setTimeout(() => {
+                    shownav.classList.remove('active');
+                    nav.classList.remove('active');
+                    main.style.display = 'grid';
+                }, 1);
+                
+            });    
+        });
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='manga-1.js') }}" defer></script>
+</body>
+</html>

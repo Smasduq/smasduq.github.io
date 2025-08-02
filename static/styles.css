@@ -1,0 +1,145 @@
+* {
+    text-decoration: none;
+}
+body {
+    background-color: rgb(0 0 0);
+    color: rgb(255 255 255);
+    min-height: 100vh;
+    font-style: italic;
+    margin: 0;
+}
+
+h1 {
+    font-family: "Press Start 2P", "consolas", sans-serif;
+    font-style: italic;
+    font-weight: bold;
+}
+
+#icon {
+    border-radius: 50%;
+}
+
+.nav-bar {
+    background-color: rgb(255 69 0);
+    padding: 2px;
+    margin: 0;
+}
+
+header nav div h1 {
+    text-align: center;
+    font-size: 30px;
+    color: black;
+}
+
+.container1 {
+    text-align: center;
+    text-align: center;
+}
+
+.start-now {
+    display: inline-block;
+    color: orangered;
+    padding: 15px 50px;
+    border: 3px solid orangered;
+    border-radius: 30%;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.start-now:hover {
+    animation: pulsate 3s ease-in-out;
+}
+
+marquee {
+    color: rgb(255 69 0);
+}
+
+.container {
+    background-color: rgb(255, 60, 0);
+    margin-top: 30px;
+    width: 100%;
+    height: 300px;
+    padding-top: 30px;
+    padding-bottom: 10px;
+}
+
+.container2 {
+    background-color: rgb(0, 0, 0);
+    margin-top: 30px;
+    width: 100%;
+    height: 300px;
+    padding-top: 30px;
+    padding-bottom: 10px;
+}
+
+.box {
+    height: 90%;
+    width: 98%;
+    margin: 0;
+    margin-left: 1%;
+    background-color: rgb(6, 6, 6);
+    border-radius: 30px;
+    text-align: center;
+    margin: 10px;
+}
+
+.box2 {
+    height: 90%;
+    width: 98%;
+    margin: 0;
+    margin-left: 1%;
+    background-color: rgb(255, 70, 6);
+    border-radius: 30px;
+    text-align: center;
+}
+
+.box h3 {
+    text-align: center;
+}
+
+.box button {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.box button a {
+    color: rgb(0 0 0);
+}
+
+.support-btn {
+    color: rgb(0 0 0);
+    background-color: rgb(255 69 0);
+    height: 40px;
+    width: 100px;
+    border-radius: 30%;
+    cursor: pointer;
+    border-style: none;
+}
+
+.support-btn:hover {
+    background-color: rgb(255 140 50);
+}
+
+p {
+    font-size: 25px;
+}
+
+#ver {
+    text-align: center;
+}
+
+@media screen and (max-width: 555px) {
+    .box, .box2 {
+        margin-left: 6px;
+    }
+
+    p {
+        font-size: 20px;
+    }
+}
+
+@keyframes pulsate {
+    0% {
+        box-shadow: 0 0 25px rgb(255 165 0), 0 0 50px rgb(255 69 0);
+    }
+}

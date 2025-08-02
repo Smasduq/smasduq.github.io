@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='smasduq.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='support.css') }}">
+    <title>Smasduq - Support</title>
+</head>
+<body>
+    <h1>Support Me</h1>
+    <hr>
+    <table>
+        
+        <tr>
+            <th>Bank Name |</th>
+            <th>| Account No.</th>
+        </tr>
+        <tr>
+            <td class="name">Moniepoint</td>
+            <td>6803082572</td>
+        </tr>
+    </table>
+    <p>CLICK THE BUTTON BELOW TO PAY WITH PAYSTACK</p>
+    <div class="container">
+        <a href="{{ url_for('pay_form') }}"><button class="btn">Pay with Paystack</button></a>
+    </div>
+    <p>You can pay with Card, Transfer, USSD and Bank. Note: Any currency is acceptable.</p>
+    <p>Thanks alot!!!</p>
+</body>
+</html>

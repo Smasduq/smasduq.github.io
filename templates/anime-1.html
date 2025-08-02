@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="120">
+    <meta name="description" content="Download Anime, Manga and Cars clips for edit.">
+    <meta name="keywords" content="smasduq, anime, manga, edit, edits, car, cars, clip, clips, gojo, sukuna, luffy, zoro, sung, jin, woo, solo, levelling, jjk, Smasduq, TheOnlySmasduq, BMW, mercedes, toyota, background, for">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='anime-1.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='smasduq.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <title>Smasduq - Download Anime</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <label id="logo">TheOnlySmasduq</label>
+            <div class="ham-menu navbar-toggler" type="button">
+                <span></span>
+                <span></span>
+                <span></span>
+                <div class="off-screen-menu">
+                    <ul>
+                        <li><a href="{{ url_for('home') }}">Home</a></li>
+                        <li><a href="{{ url_for('download') }}">Download</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                        <li><a href="{{ url_for('support') }}">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <h1 class="tit">ANIME</h1>
+        <input type="search" id="search" placeholder="Search">
+        <button id="search-btn">Search</button>
+        <p>Anime Episodes and Characters clips are all here</p>
+        <h2>CHARACTERS </h2>
+        <div class="all" id="all1">
+            <a href="{{ url_for('sukuna_an') }}" class="clips-bg">
+                <span class="name">SUKUNA</span> 
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('gojo_an') }}" class="clips-bg">
+                <span class="name">SATORU GOJO</span> 
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('goku_an') }}" class="clips-bg">
+                <span class="name">GOKU</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('yuta_an') }}" class="clips-bg">
+                <span class="name">YUTA OKKOTSU</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('luffy_an') }}" class="clips-bg">
+                <span class="name">MONKEY D. LUFFY</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('isagi_an') }}" class="clips-bg">
+                <span class="name">ISAGI YOICHI</span> 
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('saitama_an') }}" class="clips-bg">
+                <span class="name">SAITAMA</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('nagi_an') }}" class="clips-bg">
+                <span class="name">NAGI SEISHIRO</span> 
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('sae_an') }}" class="clips-bg">
+                <span class="name">SAE ITOSHI</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('muzan_an') }}" class="clips-bg">
+                <span class="name">MUZAN KIBUTSUJI</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('hancock_an') }}" class="clips-bg">
+                <span class="name">BOA HANCOCK</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('yuji_an') }}" class="clips-bg">
+                <span class="name">ITADORI YUJI</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('zoro_an') }}" class="clips-bg">
+                <span class="name">RORONOA ZORO</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('tanjiro_an') }}" class="clips-bg">
+                <span class="name">KAMADO TANJIRO</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('sanji_an') }}" class="clips-bg">
+                <span class="name">VINSMOKE SANJI</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('aizen_an') }}" class="clips-bg">
+                <span class="name">AIZEN SOUSUKE</span>
+                <p>Tap the button to start the download</p>
+            </a>
+        </div>
+        <h2>EPISODES</h2>
+        <div class="all" id="ep-all">
+            <a href="{{ url_for('one_piece_an') }}" class="clips-bg">
+                <span class="name">ONE PIECE</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('demon_slayer_an') }}" class="clips-bg">
+                <span class="name">DEMON SLAYER</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('solo_leveling_an') }}" class="clips-bg">
+                <span class="name">SOLO LEVELING</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('one_punch_man_an') }}" class="clips-bg">
+                <span class="name">ONE PUNCH MAN</span>
+                <p>Tap the button to start the download</p>
+            </a>
+            <a href="{{ url_for('blue_lock_an') }}" class="clips-bg">
+                <span class="name">BLUE LOCK</span>
+                <p>Tap the button to start the download</p>
+            </a>
+        </div>
+    </main>
+    
+
+    <script>
+        const shownav = document.querySelector('.ham-menu');
+
+        const nav = document.querySelector('.off-screen-menu');
+
+        const main = document.getElementsByClassName('all'); 
+
+        const menuLinks = document.querySelectorAll('.off-screen-menu a'); 
+
+        shownav.addEventListener('click', () =>  {
+            shownav.classList.toggle('active');
+            nav.classList.toggle('active');
+
+            if (main.style.display === 'none') {
+                main.style.display = 'grid';
+            } else {
+                main.style.display = 'none';
+            }
+        });
+
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                setTimeout(() => {
+                    shownav.classList.remove('active');
+                    nav.classList.remove('active');
+                    main.style.display = 'grid';
+                }, 1);
+                
+            });    
+        });
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='anime-1.js') }}" defer></script>
+</body>
+</html>

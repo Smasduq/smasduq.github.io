@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='contact.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='smasduq.png') }}" type="image/png">
+    
+    <title>Smasduq - Contact</title>
+</head>
+<body>
+    <header>
+        
+        <nav>
+            <label id="logo">TheOnlySmasduq</label>
+            <div class="ham-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+                <div class="off-screen-menu">
+                    <ul>
+                        <li><a href="{{ url_for('home') }}">Home</a></li>
+                        <li><a href="{{ url_for('download') }}">Download</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                        <li><a href="{{ url_for('support') }}">Support</a></li>
+                        <li><a href="{{ url_for('about') }}">About</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <h1>Contact Me</h1>
+        <p>Email: smasduqacc@gmail.com</p>
+        <p>Phone Number: 08104990988</p>
+        <a href="https://www.instagram.com/s.masduq?igsh=OWszNDQIOGx0czVo" target="_blank"><i class="fab fa-instagram instagram"></i></a>
+        <a href="https://youtube.com/@smasduq?si=CfZYdCopGAoR_k82" target="_blank"><i class="fab fa-youtube youtube"></i></a>
+        <a href="https://github.com/smasduq" target="_blank"><i class="fab fa-github github"></i></a>
+    </main>
+    <footer>
+    </footer>
+    <script>
+        const shownav = document.querySelector('.ham-menu');
+
+        const nav = document.querySelector('.off-screen-menu');
+
+        shownav.addEventListener('click', () =>  {
+            shownav.classList.toggle('active');
+            nav.classList.toggle('active');
+            })
+    </script>
+</body>
+</html>

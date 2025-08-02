@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='pay.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='Smasduq.png') }}" type="image/png">
+    <title>Smasduq - Pay Form</title>
+</head>
+<body>
+    <h2>Pay to Smasduq</h2>
+    <p>Please fill in the form before paying to me.</p>
+    <div class="container">
+        <form method="POST" action="/pay">
+            <input type="text" name="name" class="pay-btn" placeholder="Your Name" required><br>
+            <input type="email" name="email" class="pay-btn" placeholder="Email" required><br>
+            <input type="number" name="amount" class="pay-btn" placeholder="Amount (NGN)" required><br>
+            <button type="submit" class="pay">Pay Now</button>
+        </form>
+        <p>Any currency is acceptable, You just need to write the amount you want to give me in NGN. And Card is recommended.</p>
+        <p>VERVE is also accepted.</p>
+    </div>
+    
+</body>
+</html> 
