@@ -95,6 +95,7 @@ def pay_form():
 def pay():
     email = request.form["email"]
     amount = int(request.form["amount"]) * 100  # Convert to kobo
+    name = request.form["name"]
 
     headers = {
         "Authorization": f"Bearer {PAYSTACK_SECRET_KEY}",
@@ -104,6 +105,15 @@ def pay():
     data = {
         "email": email,
         "amount": amount,
+        "metadata": {
+            "custom_fields": [
+                {
+                    "display_name": "Customer Full name",
+                    "variable_name": "customer_full_name",
+                    "value": name,
+                }
+            ]
+        }
         "callback_url": "http://smasduq.onrender.com/payment-complete"
     }
 
@@ -284,3 +294,4 @@ def blue_lock_an():
 if __name__ == "__main__":
 
     app.run(debug=True)
+
