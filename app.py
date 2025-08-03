@@ -113,7 +113,7 @@ def pay():
                     "value": name,
                 }
             ]
-        }
+        },
         "callback_url": "http://smasduq.onrender.com/payment-complete"
     }
 
@@ -294,4 +294,5 @@ def blue_lock_an():
 if __name__ == "__main__":
 
     app.run(debug=True)
+
 
