@@ -104,7 +104,7 @@ def pay():
     data = {
         "email": email,
         "amount": amount,
-        "callback_url": "http://localhost:5000/payment-complete"
+        "callback_url": "http://smasduq.onrender.com/payment-complete"
     }
 
     response = requests.post("https://api.paystack.co/transaction/initialize", json=data, headers=headers)
@@ -282,4 +282,5 @@ def blue_lock_an():
 
 
 if __name__ == "__main__":
+
     app.run(debug=True)
