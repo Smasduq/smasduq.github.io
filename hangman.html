@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman - The Challenge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+        }
+        .hangman-container {
+            /* Custom styling for the canvas background */
+            background-color: #0f172a; 
+            border-radius: 8px;
+        }
+        #hangmanCanvas {
+            margin: 0 auto;
+            display: block;
+        }
+        .letter-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        /* Light-mode fallbacks when html is not .dark (pragmatic) */
+        html:not(.dark) .bg-white { background-color: #ffffff !important; }
+        html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
+        html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
+        html:not(.dark) .bg-indigo-50 { background-color: #eef2ff !important; }
+        html:not(.dark) .bg-indigo-100 { background-color: #e0e7ff !important; }
+        html:not(.dark) .bg-green-50 { background-color: #f0fdf4 !important; }
+        html:not(.dark) .bg-green-100 { background-color: #dcfce7 !important; }
+        html:not(.dark) .bg-red-100 { background-color: #fee2e2 !important; }
+        html:not(.dark) .bg-yellow-100 { background-color: #fef3c7 !important; }
+        html:not(.dark) .bg-purple-100 { background-color: #f3e8ff !important; }
+
+        html:not(.dark) .text-gray-900 { color: #0f172a !important; }
+        html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
+        html:not(.dark) .text-gray-700 { color: #374151 !important; }
+        html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
+        html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
+        html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
+
+        /* Buttons/CTAs fallbacks */
+        html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
+        html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col">
+
+    <header class="bg-white dark:bg-gray-900 shadow-md">
+        <nav class="container mx-auto px-6 py-4">
+            <!-- Placeholder link -->
+            <a href="games.html" class="text-lg text-indigo-600 hover:underline">&larr; Back to Game Zone</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-10 flex-grow">
+        <div class="max-w-2xl mx-auto text-center">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">The Hangman Challenge 🧠</h1>
+            <p class="text-lg text-gray-600 mb-8">Guess the word from the given category before you run out of incorrect guesses (6 strikes).</p>
+            
+            <div id="game-area" class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-2xl">
+                
+                <!-- Hangman Drawing Canvas -->
+                <div class="flex justify-center mb-8">
+                    <div class="hangman-container p-4">
+                        <canvas id="hangmanCanvas" width="200" height="250"></canvas>
+                    </div>
+                </div>
+
+                <div class="mb-8 border-b pb-4">
+                    <p id="word-display" class="text-5xl tracking-widest font-mono text-gray-800 break-all" style="min-height: 50px;"></p>
+                </div>
+
+                <p id="message" class="text-xl font-semibold mb-6 text-indigo-600">Click START to begin!</p>
+                
+                <div class="flex justify-between items-center mb-8">
+                    <span class="text-lg font-medium">Strikes Left: <span id="strikes-left" class="text-red-600 font-bold">6</span></span>
+                    <span class="text-lg font-medium">Guessed: <span id="guessed-letters" class="text-blue-600 font-bold">--</span></span>
+                </div>
+
+                <div id="letter-buttons" class="grid grid-cols-7 gap-2">
+                    <!-- Buttons will be rendered here -->
+                </div>
+                
+                <button id="start-button" class="mt-8 w-full bg-green-600 text-white p-3 rounded-lg text-xl font-bold hover:bg-green-700 transition duration-200">START GAME</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- MASSIVE DICTIONARY (JSON-like structure) ---
+        const wordData = {
+            "Programming": [
+                "PYTHON", "JAVASCRIPT", "TAILWIND", "REACT", "ALGORITHM", 
+                "VARIABLE", "FUNCTION", "PROMISE", "SYNTAX", "DATABASE", 
+                "COMPILER", "OBJECT", "BOOLEAN", "INTEGER", "LIBRARY", 
+                "FRAMEWORK", "RECURSION", "FIREBASE", "ASYNC", "LINUX"
+            ],
+            "Technology": [
+                "UBUNTU", "DEPLOY", "FIREWALL", "NETWORK", "PROTOCOL",
+                "BANDWIDTH", "CLOUD", "SERVER", "CLIENT", "BACKEND",
+                "FRONTEND", "DEVOPS", "MICROSOFT", "GOOGLE", "HARDWARE",
+                "SOFTWARE", "ROUTER", "MODEM", "WIFI", "ETHERNET"
+            ],
+            "Abstract Terms": [
+                "MYSTERY", "CALENDAR", "ADVENTURE", "QUARTZ", "BLIZZARD",
+                "WHISKEY", "GAZETTE", "JAZZ", "OXYGEN", "ABYSS", 
+                "BUFFALO", "CRYPT", "FLAPJACK", "GALVANIZED", "ZEPHYR",
+                "PHANTOM", "EXODUS", "QUIRKY", "VORTEX", "UNKNOWN"
+            ]
+        };
+        const MAX_STRIKES = 6;
+        const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+        // Flatten the word data into a single array of { word, category } objects
+        let DICTIONARY = [];
+        for (const category in wordData) {
+            DICTIONARY.push(...wordData[category].map(word => ({ word, category })));
+        }
+
+        // --- Game State Variables ---
+        let secretWord = '';
+        let revealedWord = [];
+        let strikes = 0;
+        let guessedLetters = [];
+        let isGameOver = false;
+        let currentCategory = '';
+
+        // --- DOM Elements ---
+        const wordDisplay = document.getElementById('word-display');
+        const strikesLeft = document.getElementById('strikes-left');
+        const guessedLettersDisplay = document.getElementById('guessed-letters');
+        const letterButtonsContainer = document.getElementById('letter-buttons');
+        const message = document.getElementById('message');
+        const startButton = document.getElementById('start-button');
+        
+        // Canvas Setup
+        const hangmanCanvas = document.getElementById('hangmanCanvas');
+        const ctx = hangmanCanvas.getContext('2d');
+
+
+        // --- Canvas Drawing Functions ---
+
+        /**
+         * Draws the empty gallows structure.
+         */
+        function drawGallows() {
+            ctx.clearRect(0, 0, hangmanCanvas.width, hangmanCanvas.height);
+            ctx.strokeStyle = '#f1f5f9'; // Light color for drawing
+            ctx.lineWidth = 5;
+            
+            const [w, h] = [hangmanCanvas.width, hangmanCanvas.height];
+            const base = h - 20;
+            const top = 30;
+            const center = w / 2;
+            const rope = 50;
+            
+            // Base
+            ctx.beginPath();
+            ctx.moveTo(w / 4, base);
+            ctx.lineTo(w * 3 / 4, base);
+            ctx.stroke();
+
+            // Vertical pole
+            ctx.beginPath();
+            ctx.moveTo(center - rope, base);
+            ctx.lineTo(center - rope, top);
+            ctx.stroke();
+            
+            // Top beam
+            ctx.beginPath();
+            ctx.moveTo(center - rope, top);
+            ctx.lineTo(center + 10, top);
+            ctx.stroke();
+            
+            // Rope
+            ctx.beginPath();
+            ctx.lineWidth = 3;
+            ctx.moveTo(center, top);
+            ctx.lineTo(center, top + rope);
+            ctx.stroke();
+        }
+
+        /**
+         * Draws the Hangman parts based on wrong guesses.
+         */
+        function drawHangmanPart(partIndex) {
+            ctx.strokeStyle = '#ef4444'; // Red color for the body
+            ctx.lineWidth = 4;
+            
+            const [w, h] = [hangmanCanvas.width, hangmanCanvas.height];
+            const base = h - 20;
+            const top = 30;
+            const center = w / 2;
+            const rope = 50;
+
+            switch(partIndex) {
+                case 1: // Head
+                    ctx.beginPath();
+                    ctx.arc(center, top + rope + 15, 15, 0, Math.PI * 2, true);
+                    ctx.stroke();
+                    break;
+                case 2: // Body
+                    ctx.beginPath();
+                    ctx.moveTo(center, top + rope + 30);
+                    ctx.lineTo(center, base - 100);
+                    ctx.stroke();
+                    break;
+                case 3: // Left Arm
+                    ctx.beginPath();
+                    ctx.moveTo(center, base - 130);
+                    ctx.lineTo(center - 20, base - 110);
+                    ctx.stroke();
+                    break;
+                case 4: // Right Arm
+                    ctx.beginPath();
+                    ctx.moveTo(center, base - 130);
+                    ctx.lineTo(center + 20, base - 110);
+                    ctx.stroke();
+                    break;
+                case 5: // Left Leg
+                    ctx.beginPath();
+                    ctx.moveTo(center, base - 100);
+                    ctx.lineTo(center - 20, base - 70);
+                    ctx.stroke();
+                    break;
+                case 6: // Right Leg (Final piece)
+                    ctx.beginPath();
+                    ctx.moveTo(center, base - 100);
+                    ctx.lineTo(center + 20, base - 70);
+                    ctx.stroke();
+                    break;
+            }
+        }
+
+
+        // --- Game Setup ---
+        function initializeGame() {
+            if (DICTIONARY.length === 0) {
+                message.textContent = "Error: Dictionary is empty.";
+                return;
+            }
+
+            // Select random word object
+            const randomWordObj = DICTIONARY[Math.floor(Math.random() * DICTIONARY.length)];
+
+            secretWord = randomWordObj.word;
+            currentCategory = randomWordObj.category;
+            revealedWord = Array(secretWord.length).fill('_');
+            strikes = 0;
+            guessedLetters = [];
+            isGameOver = false;
+            
+            // UI Resets
+            drawGallows();
+            strikesLeft.textContent = MAX_STRIKES;
+            guessedLettersDisplay.textContent = '--';
+            message.textContent = `Category: ${currentCategory.toUpperCase()}. Guess a letter!`;
+            message.classList.remove('text-green-600', 'text-red-600');
+            startButton.style.display = 'none';
+
+            renderWord();
+            renderButtons(true);
+        }
+
+        // --- Rendering ---
+        function renderWord() {
+            wordDisplay.textContent = revealedWord.join(' ');
+        }
+
+        function renderButtons(reset = false) {
+            if (reset || letterButtonsContainer.innerHTML === '') {
+                letterButtonsContainer.innerHTML = '';
+                for (let char of ALPHABET) {
+                    const button = document.createElement('button');
+                    button.textContent = char;
+                    button.className = 'letter-btn bg-indigo-500 text-white p-2 rounded-md font-bold text-lg hover:bg-indigo-600 transition duration-100 shadow-md';
+                    button.setAttribute('data-letter', char);
+                    button.addEventListener('click', () => handleGuess(char));
+                    letterButtonsContainer.appendChild(button);
+                }
+            }
+            
+            // Re-enable all buttons if reset is true
+            if (reset) {
+                letterButtonsContainer.querySelectorAll('.letter-btn').forEach(btn => {
+                    btn.disabled = false;
+                    btn.classList.remove('bg-green-500', 'bg-red-500');
+                    btn.classList.add('bg-indigo-500', 'hover:bg-indigo-600');
+                });
+            }
+        }
+
+        function updateButtonState(letter, correct) {
+            const button = document.querySelector(`[data-letter="${letter}"]`);
+            if (button) {
+                button.disabled = true;
+                button.classList.remove('bg-indigo-500', 'hover:bg-indigo-600');
+                button.classList.add(correct ? 'bg-green-500' : 'bg-red-500');
+            }
+        }
+
+        // --- Core Guess Logic ---
+        function handleGuess(letter) {
+            if (isGameOver || guessedLetters.includes(letter)) return;
+
+            guessedLetters.push(letter);
+            guessedLettersDisplay.textContent = guessedLetters.join(', ');
+
+            let correctGuess = false;
+            for (let i = 0; i < secretWord.length; i++) {
+                if (secretWord[i] === letter) {
+                    revealedWord[i] = letter;
+                    correctGuess = true;
+                }
+            }
+
+            if (correctGuess) {
+                renderWord();
+                updateButtonState(letter, true);
+                if (!revealedWord.includes('_')) {
+                    endGame(true); // Win condition
+                }
+            } else {
+                strikes++;
+                drawHangmanPart(strikes); // Draw the next part
+                strikesLeft.textContent = MAX_STRIKES - strikes;
+                updateButtonState(letter, false);
+                if (strikes >= MAX_STRIKES) {
+                    endGame(false); // Lose condition
+                }
+            }
+        }
+
+        // --- End Game ---
+        function endGame(won) {
+            isGameOver = true;
+            letterButtonsContainer.querySelectorAll('.letter-btn').forEach(btn => btn.disabled = true);
+            startButton.textContent = 'Play Again';
+            startButton.style.display = 'block';
+
+            if (won) {
+                message.textContent = `VICTORY! The word was "${secretWord}" (Category: ${currentCategory.toUpperCase()})`;
+                message.classList.add('text-green-600');
+            } else {
+                message.textContent = `Game Over! The word was "${secretWord}" (Category: ${currentCategory.toUpperCase()})`;
+                message.classList.add('text-red-600');
+                wordDisplay.textContent = secretWord.split('').join(' '); // Show the word
+            }
+        }
+
+        // --- Event Listeners and Initial Setup ---
+        startButton.addEventListener('click', initializeGame);
+        
+        // Initial setup before game starts
+        renderButtons();
+        letterButtonsContainer.querySelectorAll('.letter-btn').forEach(btn => btn.disabled = true);
+        wordDisplay.textContent = 'H A N G M A N';
+        drawGallows(); // Draw the empty gallows on load
+    </script>
+    <!-- Theme init: apply saved theme (no icons added) -->
+    <script>
+        (function(){
+            try {
+                const saved = localStorage.getItem('theme');
+                if (saved === 'dark') document.documentElement.classList.add('dark');
+                else if (saved === 'light') document.documentElement.classList.remove('dark');
+                else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
+            } catch (e) { /* ignore */ }
+        })();
+    </script>
+</body>
+</html>

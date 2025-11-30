@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smasduq - Music & Artist Links</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        
+        /* Custom Font Setup (Inter is used by default in Tailwind, but specifying it ensures consistency) */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        html { scroll-behavior: smooth; }
+        /* Hero background pattern for depth */
+        .hero-pattern {
+            background-color: #f9fafb;
+            background-image: radial-gradient(#d1d5db 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        /* Theme icon defaults (desktop, mobile, drawer) to avoid flashing both icons before JS runs) */
+        /* Desktop */
+        #sun-icon-desktop, #moon-icon-desktop { display: inline; }
+        #moon-icon-desktop { display: none; }
+        /* Mobile */
+        #sun-icon-mobile, #moon-icon-mobile { display: inline; }
+        #moon-icon-mobile { display: none; }
+        /* Drawer */
+        #sun-icon-drawer, #moon-icon-drawer { display: inline; }
+        #moon-icon-drawer { display: none; }
+        @media (prefers-color-scheme: dark) {
+            /* Desktop */
+            #sun-icon-desktop { display: none; }
+            #moon-icon-desktop { display: inline; }
+            /* Mobile */
+            #sun-icon-mobile { display: none; }
+            #moon-icon-mobile { display: inline; }
+            /* Drawer */
+            #sun-icon-drawer { display: none; }
+            #moon-icon-drawer { display: inline; }
+        }
+
+        /* Drawer transition used by mobile menu */
+        .drawer-transition { transition: transform 0.25s ease-out; }
+
+        .music-card {
+            transition: all 0.3s ease;
+        }
+        .music-card:hover {
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .music-card #apple-img {
+            border-radius: 19px;
+        }
+
+        .music-card #youtube-img {
+            border-radius: 55px;
+        }
+
+        .music-card #audiomack-img {
+            border-radius: 20px;
+        }
+
+        /* Light-mode fallbacks when html is not .dark (pragmatic) */
+        html:not(.dark) .bg-white { background-color: #ffffff !important; }
+        html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
+        html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
+        html:not(.dark) .bg-indigo-50 { background-color: #eef2ff !important; }
+        html:not(.dark) .bg-indigo-100 { background-color: #e0e7ff !important; }
+        html:not(.dark) .bg-green-50 { background-color: #f0fdf4 !important; }
+        html:not(.dark) .bg-green-100 { background-color: #dcfce7 !important; }
+        html:not(.dark) .bg-red-100 { background-color: #fee2e2 !important; }
+        html:not(.dark) .bg-yellow-100 { background-color: #fef3c7 !important; }
+        html:not(.dark) .bg-purple-100 { background-color: #f3e8ff !important; }
+
+        html:not(.dark) .text-gray-900 { color: #0f172a !important; }
+        html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
+        html:not(.dark) .text-gray-700 { color: #374151 !important; }
+        html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
+        html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
+        html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
+
+        /* Buttons/CTAs fallbacks */
+        html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
+        html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+
+    <!-- Header (Navigation) - Consistent Look -->
+    <header class="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-xl dark:shadow-2xl backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95 transition-colors duration-300">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#hero" class="text-3xl font-extrabold text-indigo-700 dark:text-indigo-500 tracking-tight transition duration-300 transform hover:scale-105">Smasduq</a>
+            <div class="hidden sm:flex items-center space-x-6 text-lg">
+                <a href="index.html#work" class="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-300 font-medium">Work</a>
+                <a href="games.html" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition duration-300 font-bold border-b-2 border-indigo-600 dark:border-indigo-400 pb-1">Games</a>
+                <a href="music.html" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition duration-300 font-bold border-b-2 border-indigo-600 dark:border-indigo-400 pb-1">Music</a>
+                <a href="index.html#about" class="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-300 font-medium">About</a>
+                <a href="index.html#contact" class="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-300 font-medium">Contact</a>
+
+                
+
+                <!-- Theme Toggle -->
+                <button id="theme-toggle-desktop" onclick="toggleTheme()" class="p-2 ml-0 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <svg id="sun-icon-desktop" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg id="moon-icon-desktop" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile: show simple nav and a theme button -->
+            <div class="sm:hidden flex items-center space-x-2">
+
+                <button id="theme-toggle-mobile" onclick="toggleTheme()" class="p-2 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <svg id="sun-icon-mobile" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg id="moon-icon-mobile" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+
+                <button id="mobile-menu-button" onclick="toggleMenu(true)" class="p-2 text-indigo-600 hover:text-indigo-800 transition duration-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Drawer -->
+    <div id="mobile-menu-drawer" class="fixed inset-0 z-50 transform translate-x-full drawer-transition sm:hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title">
+        <div onclick="toggleMenu(false)" class="absolute inset-0 bg-gray-900 bg-opacity-50 dark:bg-opacity-80 backdrop-blur-sm"></div>
+        <div class="absolute right-0 top-0 h-full w-72 max-w-full bg-white dark:bg-gray-800 shadow-2xl p-6 flex flex-col transition-colors duration-300">
+            <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-6">
+                <h2 id="mobile-menu-title" class="text-2xl font-bold text-gray-900 dark:text-gray-100">Menu</h2>
+                <button onclick="toggleMenu(false)" class="p-2 text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <nav class="flex flex-col space-y-5 text-xl font-semibold">
+                <a onclick="toggleMenu(false)" href="index.html#work" class="text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 pb-2">Work</a>
+                <a onclick="toggleMenu(false)" href="games.html" class="text-indigo-700 dark:text-indigo-500 font-bold pb-2">Games</a>
+                <a onclick="toggleMenu(false)" href="music.html" class="text-indigo-700 dark:text-indigo-500 font-bold pb-2">Music</a>
+                <a onclick="toggleMenu(false)" href="index.html#about" class="text-gray-800 dark:text-gray-100 pb-2">About</a>
+                <a onclick="toggleMenu(false)" href="index.html#contact" class="text-gray-800 dark:text-gray-100 pb-2">Contact</a>
+            </nav>
+            <div class="mt-auto pt-6 border-t border-gray-200 dark:border-gray-700">
+                <a onclick="toggleMenu(false)" href="index.html#contact" class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold py-3 px-4 text-lg rounded-full shadow-lg transition duration-300">Discuss a Project</a>
+            </div>
+
+            <!-- Theme Toggle in Mobile Drawer -->
+            <div class="mt-auto pt-6 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <span class="text-gray-700 dark:text-gray-300 font-semibold">Dark Mode</span>
+                <button onclick="toggleTheme()" class="p-2 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                     <svg id="sun-icon-drawer" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg id="moon-icon-drawer" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+    </div>
+
+    <main>
+        
+        <!-- Hero Music Section -->
+        <section id="featured" class="music-bg bg-white dark:bg-gray-800 py-24 md:py-32 text-gray-900 dark:text-white border-b-8 border-indigo-600">
+            <div class="container mx-auto px-6 text-center max-w-4xl">
+                <h1 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight">
+                    <span class="text-indigo-400">Smasduq</span> | Electronic Music
+                </h1>
+                <p class="text-xl md:text-3xl font-light text-gray-500 dark:text-gray-300 mb-10">
+                    Where logic meets rhythm. Listen to the latest deep house and synthwave tracks.
+                </p>
+                
+                <!-- FEATURED EMBEDDED PLAYER (Spotify/Apple) -->
+                <div class="bg-gray-100 dark:bg-gray-700 p-6 rounded-xl shadow-2xl border border-indigo-500">
+                    <h2 class="text-2xl font-bold mb-4 text-indigo-300">Latest Release: "Hell Dance"</h2>
+                    
+                    <!-- Spotify Embed - Replace this placeholder iframe with your actual track or album code -->
+                    <div class="w-full">
+                        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/0ZK2aUI3U3Bnp0gRxXc526?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    </div>
+
+                    <p class="text-sm text-gray-700 dark:text-gray-400 mt-4">Alternatively, listen on Apple:</p>
+                    
+                    <!-- Apple Embed - Replace this placeholder iframe with your actual track or album code -->
+                    <div class="w-full mt-4">
+                        <iframe allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" frameborder="0" height="175" style="width:100%;max-width:660px;overflow:hidden;border-radius:10px;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/us/song/hell-dance/1846459585"></iframe>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Streaming Platform Links -->
+        <section id="links" class="py-16 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+            <div class="container mx-auto px-6 max-w-4xl text-center">
+                <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-10 border-b-4 border-indigo-200 inline-block pb-2">
+                    Find Me Everywhere
+                </h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    
+                    <!-- Link 1: Spotify -->
+                    <a href="https://open.spotify.com/artist/06bwQESYnf0YvdgJ7yYPsw?si=OVxzuMe5R6q3V36EOsmn0Q" target="_blank" class="music-card bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border-t-4 border-green-500">
+                        <img src="img/spotify-logo.png" alt="Spotify Icon" class="w-16 h-16 mx-auto mb-3">
+                        <p class="text-xl font-bold text-gray-900 dark:text-white">Spotify</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-150">Full Discography</p>
+                    </a>
+                    
+                    <!-- Link 2: Apple Music -->
+                    <a href="https://music.apple.com/us/artist/smasduq/1834059827" target="_blank" class="music-card bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border-t-4 border-red-500">
+                        <img src="./img/apple-music-logo.jpeg" alt="Apple Music Icon" id="apple-img" class="w-16 h-16 mx-auto mb-3">
+                        <p class="text-xl font-bold text-gray-900 dark:text-white">Apple Music</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-150">Hi-Quality Streams</p>
+                    </a>
+
+                    <!-- Link 3: YouTube Music -->
+                    <a href="https://music.youtube.com/channel/UCCM4594-NJBjP-ZluokRszw?si=FlwPaWLMZ_6EWKo3" target="_blank" class="music-card bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border-t-4 border-red-700">
+                        <img src="./img/youtube-music-logo.png" alt="SoundCloud Icon" id="youtube-img" class="w-16 h-16 mx-auto mb-3">
+                        <p class="text-xl font-bold text-gray-900 dark:text-white">YouTube Music</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-150">Demos & WIPs</p>
+                    </a>
+
+                    <!-- Link 4: Audiomack -->
+                    <a href="https://audiomack.com/smasduq" target="_blank" class="music-card bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border-t-4 border-orange-500">
+                        <img src="./img/audiomack-logo.png" alt="SoundCloud Icon" id="audiomack-img" class="w-16 h-16 mx-auto mb-3">
+                        <p class="text-xl font-bold text-gray-900 dark:text-white">Audiomack</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-150">Full Songs</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Discography Section -->
+        <section id="discography" class="py-20 md:py-24 bg-white dark:bg-gray-700 border-t border-gray-200">
+            <div class="container mx-auto px-6 max-w-4xl">
+                <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-900 dark:text-white border-b-4 border-indigo-200 inline-block pb-2">
+                    Discography
+                </h2>
+                
+                <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/artist/06bwQESYnf0YvdgJ7yYPsw?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 dark:bg-gray-950 py-10 transition-colors duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400 dark:text-gray-500">
+            <p class="mb-4 text-sm sm:text-lg">&copy; 2025 Smasduq. All rights reserved.</p>
+            <div class="mt-4 space-x-4 sm:space-x-6 text-lg sm:text-xl">
+                <!-- Replace # with actual links -->
+                <a href="https://www.linkedin.com/in/smasduq" target="_blank" class="hover:text-indigo-400 transition duration-300">LinkedIn</a>
+                <a href="https://github.com/Smasduq" target="_blank" class="hover:text-indigo-400 transition duration-300">GitHub</a>
+            
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Theme init: apply saved theme (no icons added) -->
+    <script>
+        (function(){
+            try {
+                const saved = localStorage.getItem('theme');
+                if (saved === 'dark') document.documentElement.classList.add('dark');
+                else if (saved === 'light') document.documentElement.classList.remove('dark');
+                else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
+            } catch (e) { /* ignore */ }
+        })();
+    </script>
+    <script>
+        // --- Dark/Light Mode Logic (same approach as index.html) ---
+        function updateThemeIcons(isDark) {
+            const icons = [
+                { type: 'sun', id: 'sun-icon-desktop' },
+                { type: 'moon', id: 'moon-icon-desktop' },
+                { type: 'sun', id: 'sun-icon-mobile' },
+                { type: 'moon', id: 'moon-icon-mobile' },
+            ];
+            icons.forEach(icon => {
+                const el = document.getElementById(icon.id);
+                if (!el) return;
+                const shouldShow = (isDark && icon.type === 'moon') || (!isDark && icon.type === 'sun');
+                el.style.display = shouldShow ? 'inline' : 'none';
+            });
+        }
+
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+            updateThemeIcons(isDark);
+            // Debug: log computed styles after applying theme to help trace
+            // elements that don't switch.
+            try { debugThemeState('after applyTheme'); } catch (e) { /* ignore */ }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            applyTheme(!isDark);
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            let isDark = false;
+            if (savedTheme === 'dark') isDark = true;
+            else if (savedTheme === 'light') isDark = false;
+            else isDark = prefersDark;
+            applyTheme(isDark);
+        }
+
+        document.addEventListener('DOMContentLoaded', initTheme);
+    </script>
+    <script>
+        // Mobile menu toggle (drawer)
+        function toggleMenu(show) {
+            const drawer = document.getElementById('mobile-menu-drawer');
+            if (!drawer) return;
+            if (show) {
+                drawer.classList.remove('translate-x-full');
+                drawer.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            } else {
+                drawer.classList.add('translate-x-full');
+                drawer.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Close drawer when a link inside it is clicked
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('#mobile-menu-drawer a').forEach(link => {
+                link.addEventListener('click', () => toggleMenu(false));
+            });
+        });
+    </script>
+    <script>
+        // Debug helper
+        function debugThemeState(label) {
+            const selectors = ['html', 'body', 'header', 'main', 'footer', '.bg-white'];
+            console.groupCollapsed('games.html theme debug:', label || 'state');
+            console.log('localStorage.theme =', localStorage.getItem('theme'));
+            console.log('document.documentElement.className =', document.documentElement.className);
+            selectors.forEach(sel => {
+                const el = document.querySelector(sel);
+                if (!el) return;
+                const cs = getComputedStyle(el);
+                console.log(sel, {
+                    color: cs.color,
+                    backgroundColor: cs.backgroundColor,
+                    className: el.className
+                });
+            });
+            console.groupEnd();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Number Guesser - Smasduq</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Light-mode fallbacks when html is not .dark (pragmatic) */
+        html:not(.dark) .bg-white { background-color: #ffffff !important; }
+        html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
+        html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
+        html:not(.dark) .bg-indigo-50 { background-color: #eef2ff !important; }
+        html:not(.dark) .bg-indigo-100 { background-color: #e0e7ff !important; }
+        html:not(.dark) .bg-green-50 { background-color: #f0fdf4 !important; }
+        html:not(.dark) .bg-green-100 { background-color: #dcfce7 !important; }
+        html:not(.dark) .bg-red-100 { background-color: #fee2e2 !important; }
+        html:not(.dark) .bg-yellow-100 { background-color: #fef3c7 !important; }
+        html:not(.dark) .bg-purple-100 { background-color: #f3e8ff !important; }
+
+        html:not(.dark) .text-gray-900 { color: #0f172a !important; }
+        html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
+        html:not(.dark) .text-gray-700 { color: #374151 !important; }
+        html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
+        html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
+        html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
+
+        /* Buttons/CTAs fallbacks */
+        html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
+        html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col">
+
+    <header class="bg-white dark:bg-gray-900 shadow-md">
+        <nav class="container mx-auto px-6 py-4">
+            <a href="games.html" class="text-lg text-indigo-600 hover:underline">&larr; Back to Game Zone</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-10 flex-grow">
+        <div class="max-w-md mx-auto text-center">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">The Number Guesser</h1>
+            <p class="text-lg text-gray-600 mb-8">Guess the secret 4-digit number (digits are unique). **Bulls** = correct digit in the correct position. **Cows** = correct digit in the wrong position.</p>
+            
+            <div id="game-area" class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-2xl">
+                
+                <div class="mb-6 flex justify-center space-x-2">
+                    <input type="number" id="guess-input" placeholder="Enter 4 digits" min="0" max="9999" required 
+                           class=" dark:gray-800 w-full max-w-[200px] border-2 border-gray-300 p-3 rounded-lg text-center text-xl font-mono focus:border-green-500 focus:ring-green-500" 
+                           maxlength="4">
+                    <button id="guess-button" class="bg-green-600 text-white p-3 rounded-lg font-semibold hover:bg-green-700 transition duration-150">Guess</button>
+                </div>
+                
+                <p id="message" class="text-xl font-medium text-gray-700 mb-6">Start guessing!</p>
+                <button id="new-game-button" class="bg-indigo-500 text-white p-3 rounded-lg font-bold hover:bg-indigo-600 transition duration-200 hidden">Start New Game</button>
+                
+                <div class="mt-8">
+                    <h3 class="text-2xl font-bold text-gray-700 mb-4 border-b pb-2">Previous Guesses</h3>
+                    <ul id="history-list" class="space-y-2 text-left text-lg font-mono">
+                        </ul>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const guessInput = document.getElementById('guess-input');
+        const guessButton = document.getElementById('guess-button');
+        const newGameButton = document.getElementById('new-game-button');
+        const message = document.getElementById('message');
+        const historyList = document.getElementById('history-list');
+
+        let secretCode = [];
+        let guessCount = 0;
+
+        // --- Core Logic: Generate Unique 4-Digit Code ---
+        function generateSecretCode() {
+            const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            // Shuffle the array
+            for (let i = digits.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [digits[i], digits[j]] = [digits[j], digits[i]];
+            }
+            // Take the first four digits and convert to strings
+            return digits.slice(0, 4).map(d => d.toString());
+        }
+
+        // --- Core Logic: Check Guess ---
+        function checkGuess(guessArr) {
+            let bulls = 0;
+            let cows = 0;
+
+            for (let i = 0; i < 4; i++) {
+                if (guessArr[i] === secretCode[i]) {
+                    bulls++;
+                } else if (secretCode.includes(guessArr[i])) {
+                    cows++;
+                }
+            }
+            return { bulls, cows };
+        }
+
+        // --- Game Flow Functions ---
+        function startGame() {
+            secretCode = generateSecretCode();
+            guessCount = 0;
+            historyList.innerHTML = '';
+            message.textContent = 'Enter your 4-digit guess.';
+            guessInput.value = '';
+            guessButton.disabled = false;
+            newGameButton.classList.add('hidden');
+            // Optional: console.log('Secret Code:', secretCode.join('')); 
+        }
+
+        function handleGuess() {
+            const guess = guessInput.value.trim();
+            
+            if (guess.length !== 4 || isNaN(parseInt(guess))) {
+                message.textContent = 'Please enter a valid 4-digit number.';
+                return;
+            }
+            
+            const guessArr = Array.from(guess);
+            
+            // Basic validation for unique digits
+            if (new Set(guessArr).size !== 4) {
+                 message.textContent = 'Digits must be unique!';
+                 return;
+            }
+
+            guessCount++;
+            const { bulls, cows } = checkGuess(guessArr);
+
+            // Render result
+            const listItem = document.createElement('li');
+            listItem.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-lg';
+            listItem.innerHTML = `
+                <span class="text-gray-800 font-bold">${guessCount}. ${guess}</span>
+                <span class="${bulls === 4 ? 'text-green-600 font-extrabold' : 'text-gray-600'}">
+                    <span class="text-red-500 mr-2">Bulls: ${bulls}</span> 
+                    <span class="text-blue-500">Cows: ${cows}</span>
+                </span>
+            `;
+            historyList.prepend(listItem);
+
+            guessInput.value = ''; // Clear input for next guess
+            
+            // Check for Win condition
+            if (bulls === 4) {
+                message.textContent = `You Won! Code was ${secretCode.join('')} in ${guessCount} guesses!`;
+                guessButton.disabled = true;
+                newGameButton.classList.remove('hidden');
+            } else {
+                message.textContent = `Guess #${guessCount + 1}. Try again.`;
+            }
+        }
+
+        // --- Event Listeners ---
+        guessButton.addEventListener('click', handleGuess);
+        guessInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleGuess();
+            }
+        });
+        newGameButton.addEventListener('click', startGame);
+
+        // Initial setup
+        startGame();
+    </script>
+    <!-- Theme init: apply saved theme (no icons added) -->
+    <script>
+        (function(){
+            try {
+                const saved = localStorage.getItem('theme');
+                if (saved === 'dark') document.documentElement.classList.add('dark');
+                else if (saved === 'light') document.documentElement.classList.remove('dark');
+                else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
+            } catch (e) { /* ignore */ }
+        })();
+    </script>
+</body>
+</html>

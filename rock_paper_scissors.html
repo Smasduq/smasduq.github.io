@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors - Smasduq</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-md">
+        <nav class="container mx-auto px-6 py-4">
+            <a href="games.html" class="text-lg text-indigo-600 hover:underline">&larr; Back to Game Zone</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-10 flex-grow">
+        <div class="max-w-xl mx-auto text-center">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Rock, Paper, Scissors! 👊</h1>
+            <p class="text-lg text-gray-600 mb-8">Test your luck against the computer. First to 5 points wins the round!</p>
+            
+            <div id="game-area" class="bg-white p-8 rounded-xl shadow-2xl">
+                
+                <div class="flex justify-around items-center mb-8 border-b pb-4">
+                    <div class="text-center">
+                        <p class="text-2xl font-bold">You</p>
+                        <p id="user-score" class="text-5xl text-indigo-600 font-extrabold">0</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-bold">Computer</p>
+                        <p id="computer-score" class="text-5xl text-red-600 font-extrabold">0</p>
+                    </div>
+                </div>
+
+                <p id="result-message" class="text-2xl font-semibold mb-6 text-gray-800">Make your move below!</p>
+                <div id="choices-display" class="mb-8 text-xl text-gray-500">
+                    <span id="user-choice">You chose: --</span> | <span id="computer-choice">Computer chose: --</span>
+                </div>
+                
+                <div id="buttons" class="grid grid-cols-3 gap-4">
+                    <button data-choice="rock" class="choice-button bg-gray-700 text-white p-4 rounded-lg text-3xl font-bold hover:bg-gray-800 transition duration-150">✊</button>
+                    <button data-choice="paper" class="choice-button bg-blue-500 text-white p-4 rounded-lg text-3xl font-bold hover:bg-blue-600 transition duration-150">✋</button>
+                    <button data-choice="scissors" class="choice-button bg-red-500 text-white p-4 rounded-lg text-3xl font-bold hover:bg-red-600 transition duration-150">✌️</button>
+                </div>
+                
+                <button id="reset-button" class="mt-8 bg-green-500 text-white p-3 rounded-lg font-bold hover:bg-green-600 transition duration-200 hidden">Play Again</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const choices = ['rock', 'paper', 'scissors'];
+        const emojis = { 'rock': '✊', 'paper': '✋', 'scissors': '✌️' };
+        const WINNING_SCORE = 5;
+
+        let userScore = 0;
+        let computerScore = 0;
+        
+        const userScoreDisplay = document.getElementById('user-score');
+        const computerScoreDisplay = document.getElementById('computer-score');
+        const resultMessage = document.getElementById('result-message');
+        const userChoiceDisplay = document.getElementById('user-choice');
+        const computerChoiceDisplay = document.getElementById('computer-choice');
+        const choiceButtons = document.querySelectorAll('.choice-button');
+        const resetButton = document.getElementById('reset-button');
+
+        function getComputerChoice() {
+            const randomIndex = Math.floor(Math.random() * choices.length);
+            return choices[randomIndex];
+        }
+
+        function determineWinner(user, computer) {
+            if (user === computer) return 'Draw';
+            
+            if (
+                (user === 'rock' && computer === 'scissors') ||
+                (user === 'paper' && computer === 'rock') ||
+                (user === 'scissors' && computer === 'paper')
+            ) {
+                return 'User';
+            } else {
+                return 'Computer';
+            }
+        }
+
+        function updateScore(winner) {
+            if (winner === 'User') {
+                userScore++;
+                userScoreDisplay.textContent = userScore;
+                resultMessage.textContent = 'You Win This Round! 🎉';
+                resultMessage.classList.remove('text-red-600');
+                resultMessage.classList.add('text-indigo-600');
+            } else if (winner === 'Computer') {
+                computerScore++;
+                computerScoreDisplay.textContent = computerScore;
+                resultMessage.textContent = 'Computer Wins This Round! 🤖';
+                resultMessage.classList.remove('text-indigo-600');
+                resultMessage.classList.add('text-red-600');
+            } else {
+                resultMessage.textContent = 'It\'s a Draw! 🤝';
+                resultMessage.classList.remove('text-indigo-600', 'text-red-600');
+                resultMessage.classList.add('text-gray-800');
+            }
+        }
+
+        function checkGameEnd() {
+            if (userScore === WINNING_SCORE) {
+                resultMessage.textContent = 'Game Over! You crushed the computer! 🏆';
+                endGame();
+            } else if (computerScore === WINNING_SCORE) {
+                resultMessage.textContent = 'Game Over! The machines prevail! 😥';
+                endGame();
+            }
+        }
+
+        function endGame() {
+            choiceButtons.forEach(button => button.disabled = true);
+            resetButton.classList.remove('hidden');
+        }
+
+        function resetGame() {
+            userScore = 0;
+            computerScore = 0;
+            userScoreDisplay.textContent = '0';
+            computerScoreDisplay.textContent = '0';
+            resultMessage.textContent = 'Make your move below!';
+            resultMessage.classList.remove('text-indigo-600', 'text-red-600');
+            resultMessage.classList.add('text-gray-800');
+            userChoiceDisplay.textContent = 'You chose: --';
+            computerChoiceDisplay.textContent = 'Computer chose: --';
+            choiceButtons.forEach(button => button.disabled = false);
+            resetButton.classList.add('hidden');
+        }
+
+        function playGame(userChoice) {
+            const computerChoice = getComputerChoice();
+            const winner = determineWinner(userChoice, computerChoice);
+            
+            // Display choices
+            userChoiceDisplay.textContent = `You chose: ${emojis[userChoice]} ${userChoice.toUpperCase()}`;
+            computerChoiceDisplay.textContent = `Computer chose: ${emojis[computerChoice]} ${computerChoice.toUpperCase()}`;
+            
+            updateScore(winner);
+            checkGameEnd();
+        }
+
+        // Event Listeners
+        choiceButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                if (userScore < WINNING_SCORE && computerScore < WINNING_SCORE) {
+                    playGame(e.currentTarget.getAttribute('data-choice'));
+                }
+            });
+        });
+
+        resetButton.addEventListener('click', resetGame);
+    </script>
+    <!-- Theme init: apply saved theme (no icons added) -->
+    <script>
+        (function(){
+            try {
+                const saved = localStorage.getItem('theme');
+                if (saved === 'dark') document.documentElement.classList.add('dark');
+                else if (saved === 'light') document.documentElement.classList.remove('dark');
+                else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
+            } catch (e) { /* ignore */ }
+        })();
+    </script>
+</body>
+</html>

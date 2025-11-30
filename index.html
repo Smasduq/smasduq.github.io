@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smasduq - Professional Portfolio</title>
+    <!-- Configure Tailwind to use class-based dark mode so `html.classList` toggles work -->
+    <script>
+        // Configure Tailwind CDN to use class-based dark mode. The CDN
+        // reads the global `tailwind.config` object before initializing.
+        try {
+            tailwind = window.tailwind || window.tailwindjs || window.tailwind;
+        } catch (e) {
+            // ignore
+        }
+        // Preferred explicit global assignment the CDN expects
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = Object.assign(window.tailwind.config || {}, { darkMode: 'class' });
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Font Setup */
+        body { font-family: 'Inter', sans-serif; }
+        html { scroll-behavior: smooth; }
+        
+        /* Hero background pattern for depth (Light Mode) */
+        .hero-pattern {
+            background-color: #f9fafb;
+            background-image: radial-gradient(#d1d5db 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        /* Hero background pattern for depth (Dark Mode) */
+        html.dark .hero-pattern {
+            background-color: #111827; /* Tailwind gray-900 */
+            background-image: radial-gradient(#374151 1px, transparent 0); /* Tailwind gray-700 */
+        }
+        
+        /* Custom transition for the mobile drawer */
+        .drawer-transition {
+            transition: transform 0.3s ease-out;
+        }
+
+        /* Theme icon defaults: show sun in light mode, moon in dark mode.
+           This prevents a flash of the wrong icon before JS initializes.
+           We target the icon IDs directly so this works regardless of
+           Tailwind's utility classes. */
+        #sun-icon-desktop, #sun-icon-mobile, #sun-icon-drawer { display: inline; }
+        #moon-icon-desktop, #moon-icon-mobile, #moon-icon-drawer { display: none; }
+
+        @media (prefers-color-scheme: dark) {
+            #sun-icon-desktop, #sun-icon-mobile, #sun-icon-drawer { display: none; }
+            #moon-icon-desktop, #moon-icon-mobile, #moon-icon-drawer { display: inline; }
+        }
+
+        /* If the html element has the `dark` class (Tailwind class strategy),
+           ensure the moon icons are visible and sun icons hidden. */
+        html.dark #sun-icon-desktop, html.dark #sun-icon-mobile, html.dark #sun-icon-drawer { display: none; }
+        html.dark #moon-icon-desktop, html.dark #moon-icon-mobile, html.dark #moon-icon-drawer { display: inline; }
+
+          /* Fallback overrides for light mode
+              If Tailwind's CDN has generated `dark:` styles via media queries
+              (prefers-color-scheme), toggling the `html.dark` class won't
+              affect those rules. These overrides force light-mode colors
+              when html does NOT have the `dark` class. They use
+              high-specificity selectors and !important as a pragmatic
+              temporary fix until Tailwind is confirmed to be using
+              class-based dark mode. */
+          html:not(.dark) .bg-white { background-color: #ffffff !important; }
+          html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
+          html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
+          html:not(.dark) .bg-gray-200 { background-color: #e5e7eb !important; }
+          html:not(.dark) .bg-gray-800 { background-color: transparent !important; }
+          html:not(.dark) .bg-gray-900 { background-color: transparent !important; }
+
+          html:not(.dark) .text-gray-900 { color: #0f172a !important; }
+          html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
+          html:not(.dark) .text-gray-700 { color: #374151 !important; }
+          html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
+          html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
+          html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
+          html:not(.dark) .text-gray-300 { color: #d1d5db !important; }
+          html:not(.dark) .text-gray-100 { color: #f3f4f6 !important; }
+
+          /* Buttons/CTAs fallbacks */
+          html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
+          html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+
+    <!-- Header (Navigation) - Fixed on scroll, optimized for responsiveness -->
+    <header class="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-xl dark:shadow-2xl backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95 transition-colors duration-300">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <a href="#hero" class="text-2xl sm:text-3xl font-extrabold text-indigo-700 dark:text-indigo-500 tracking-tight transition duration-300 transform hover:scale-105">Smasduq</a>
+            
+            <!-- Desktop Navigation -->
+            <div class="hidden sm:flex items-center space-x-6 text-lg">
+                <a href="#work" class="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-300 font-medium">Work</a>
+                <a href="games.html" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition duration-300 font-bold border-b-2 border-indigo-600 dark:border-indigo-400 pb-1">Games</a>
+                <a href="music.html" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition duration-300 font-bold border-b-2 border-indigo-600 dark:border-indigo-400 pb-1">Music</a>
+                <a href="#about" class="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-300 font-medium">About</a>
+                <a href="#contact" class="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-300 font-medium">Contact</a>
+
+                <!-- Theme Toggle Button (Desktop) -->
+                <button id="theme-toggle-desktop" onclick="toggleTheme()" class="p-2 ml-4 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <svg id="sun-icon-desktop" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg id="moon-icon-desktop" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Button (Hamburger) and Theme Toggle -->
+            <div class="sm:hidden flex items-center space-x-2">
+                 <!-- Theme Toggle Button (Mobile) -->
+                <button id="theme-toggle-mobile" onclick="toggleTheme()" class="p-2 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <svg id="sun-icon-mobile" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg id="moon-icon-mobile" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+
+                <!-- Mobile Menu Button (Hamburger) -->
+                <button id="mobile-menu-button" onclick="toggleMenu(true)" class="p-2 text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 transition duration-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Drawer (The awesome pop-up navbar) -->
+    <div id="mobile-menu-drawer" class="fixed inset-0 z-50 transform translate-x-full drawer-transition sm:hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title">
+        
+        <!-- Backdrop (Click to close) -->
+        <div onclick="toggleMenu(false)" class="absolute inset-0 bg-gray-900 bg-opacity-50 dark:bg-opacity-80 backdrop-blur-sm"></div>
+
+        <!-- Menu Content -->
+        <div class="absolute right-0 top-0 h-full w-80 max-w-full bg-white dark:bg-gray-800 shadow-2xl p-6 flex flex-col transition-colors duration-300">
+            
+            <!-- Header and Close Button -->
+            <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-6">
+                <h2 id="mobile-menu-title" class="text-3xl font-extrabold text-indigo-700 dark:text-indigo-500">Menu</h2>
+                <button onclick="toggleMenu(false)" class="p-2 text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Links -->
+            <nav class="flex flex-col space-y-5 text-xl font-semibold">
+                <!-- Links trigger toggleMenu(false) to close the drawer upon navigation -->
+                <a onclick="toggleMenu(false)" href="#work" class="text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-300 pb-2">Work</a>
+                
+                <a onclick="toggleMenu(false)" href="games.html" class="text-indigo-700 dark:text-indigo-500 font-bold hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-300 pb-2">Games</a>
+                
+                <a onclick="toggleMenu(false)" href="music.html" class="text-indigo-700 dark:text-indigo-500 font-bold hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-300 pb-2">Music</a>
+                
+                <a onclick="toggleMenu(false)" href="#about" class="text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-300  pb-2">About</a>
+                
+                <a onclick="toggleMenu(false)" href="#contact" class="text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-300  pb-2">Contact</a>
+            </nav>
+
+            <!-- Call to Action (Hire Me/Contact) -->
+            <div class="mt-10 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <a onclick="toggleMenu(false)" href="#contact" class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold py-3 px-4 text-lg rounded-full shadow-lg transition duration-300">
+                    Discuss a Project
+                </a>
+            </div>
+
+            <!-- Theme Toggle in Mobile Drawer -->
+            <div class="mt-auto pt-6 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <span class="text-gray-700 dark:text-gray-300 font-semibold">Dark Mode</span>
+                <button onclick="toggleTheme()" class="p-2 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                     <svg id="sun-icon-drawer" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg id="moon-icon-drawer" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <main>
+        
+        <!-- Hero Section - Optimized for all screen sizes -->
+        <section id="hero" class="hero-pattern py-24 md:py-40 border-b-8 border-indigo-600 dark:border-indigo-500 transition-colors duration-300">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                
+                <!-- Avatar Placeholder -->
+                <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full mx-auto mb-8 bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center shadow-2xl border-4 border-white dark:border-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 sm:h-16 sm:w-16 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+
+                <h1 class="text-5xl sm:text-6xl md:text-8xl font-extrabold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6 leading-tight transition-colors duration-300">
+                    Hello, I'm <span class="text-indigo-700 dark:text-indigo-500">Smasduq</span>
+                </h1>
+                <p class="text-lg sm:text-xl md:text-3xl text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto font-light transition-colors duration-300">
+                    A Full-Stack Developer specializing in modern web applications, music and complex problem-solving.
+                </p>
+                <a href="#work" class="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold py-3 px-8 sm:py-4 sm:px-10 text-lg sm:text-xl rounded-full shadow-2xl transition duration-300 transform hover:scale-[1.05] hover:shadow-indigo-500/50">
+                    View My Projects &rarr;
+                </a>
+            </div>
+        </section>
+
+        <!-- Work Section - Responsive Grid -->
+        <section id="work" class="py-16 md:py-24 bg-white dark:bg-gray-900 transition-colors duration-300">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-center mb-12 sm:mb-16 text-gray-900 dark:text-gray-100 border-b-4 border-indigo-200 dark:border-indigo-800 inline-block pb-2">Featured Work</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+                    
+                    <!-- Project 1 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl dark:shadow-md border-t-4 border-indigo-500 hover:shadow-2xl dark:hover:shadow-lg transition duration-300 transform hover:-translate-y-1">
+                        <div class="h-40 sm:h-48 bg-indigo-50 dark:bg-indigo-900 flex items-center justify-center rounded-t-xl text-3xl sm:text-4xl text-indigo-600 dark:text-indigo-400 font-bold p-4">
+                            E-COMMERCE
+                        </div>
+                        <div class="p-6 sm:p-8">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">E-commerce Platform Redesign</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">A complete overhaul of a large retail site's front-end experience using cutting-edge component architecture.</p>
+                            <span class="inline-block bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 text-sm font-medium px-4 py-1 rounded-full">React, Tailwind CSS, Redux</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 2 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl dark:shadow-md border-t-4 border-green-500 hover:shadow-2xl dark:hover:shadow-lg transition duration-300 transform hover:-translate-y-1">
+                        <div class="h-40 sm:h-48 bg-green-50 dark:bg-green-900 flex items-center justify-center rounded-t-xl text-3xl sm:text-4xl text-green-600 dark:text-green-400 font-bold p-4">
+                            API SERVICE
+                        </div>
+                        <div class="p-6 sm:p-8">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">High-Performance API Development</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">Built a high-performance REST API for data processing with Python, achieving 99.9% uptime and low latency.</p>
+                            <span class="inline-block bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 text-sm font-medium px-4 py-1 rounded-full">FastAPI, Docker, PostgreSQL, CI/CD</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 3: Placeholder -->
+                    <div class="hidden lg:block bg-white dark:bg-gray-800 rounded-2xl shadow-xl dark:shadow-md border-t-4 border-cyan-500 hover:shadow-2xl dark:hover:shadow-lg transition duration-300 transform hover:-translate-y-1">
+                        <div class="h-48 bg-cyan-50 dark:bg-cyan-900 flex items-center justify-center rounded-t-xl text-4xl text-cyan-600 dark:text-cyan-400 font-bold">
+                            DATA ANALYTICS
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Real-Time Dashboard</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">Developed a real-time data visualization dashboard for tracking key business metrics.</p>
+                            <span class="inline-block bg-cyan-100 dark:bg-cyan-900 text-cyan-800 dark:text-cyan-300 text-sm font-medium px-4 py-1 rounded-full">D3.js, Node.js, WebSockets</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Games Showcase Section -->
+        <section id="games-showcase" class="py-16 md:py-24 bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-center mb-4 text-gray-900 dark:text-gray-100">Code Play Zone 🕹️</h2>
+                <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-10 sm:mb-12 max-w-3xl mx-auto">
+                    A hands-on collection of smaller projects that demonstrate JavaScript logic, browser APIs, and state management.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+                    
+                    <!-- Game 1: Color Matcher -->
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-lg dark:shadow-md border-l-4 border-indigo-500 hover:shadow-xl dark:hover:shadow-lg transition duration-300 transform hover:scale-[1.03]">
+                        <h3 class="text-xl sm:text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">Color Matcher (Stroop)</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">A fast-paced reaction test that requires focus on the color, not the word itself.</p>
+                        <a href="color_matcher.html" class="block w-full text-center bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition duration-300">Play Now &rarr;</a>
+                    </div>
+
+                    <!-- Game 2: Rock Paper Scissors -->
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-lg dark:shadow-md border-l-4 border-yellow-500 hover:shadow-xl dark:hover:shadow-lg transition duration-300 transform hover:scale-[1.03]">
+                        <h3 class="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">Rock Paper Scissors</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Classic game against the computer, demonstrating core conditional logic and state tracking.</p>
+                        <a href="rock_paper_scissors.html" class="block w-full text-center bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-white font-semibold py-2 rounded-lg transition duration-300">Play Now &rarr;</a>
+                    </div>
+
+                    <!-- Game 3: Hangman (Visible on all screens) -->
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-lg dark:shadow-md border-l-4 border-purple-500 hover:shadow-xl dark:hover:shadow-lg transition duration-300 transform hover:scale-[1.03]">
+                        <h3 class="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400 mb-2">Hangman Challenge</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Guess the word before running out of strikes. Shows string manipulation and array handling.</p>
+                        <a href="hangman.html" class="block w-full text-center bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-semibold py-2 rounded-lg transition duration-300">Play Now &rarr;</a>
+                    </div>
+
+                </div>
+                
+                <div class="mt-10 sm:mt-12">
+                    <a href="games.html" class="text-lg sm:text-xl font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition duration-300 underline">View All Games (5+) &rarr;</a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Music Production Section (UPDATED: Simple description and link) -->
+        <section id="music-showcase" class="py-16 md:py-24 bg-white dark:bg-gray-900 border-t-8 border-indigo-600/10 dark:border-indigo-500/10 transition-colors duration-300">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-center mb-4 text-gray-900 dark:text-gray-100">Music Production 🎧</h2>
+                
+                <div class="bg-indigo-50 dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg border-l-4 border-indigo-500 dark:border-indigo-600 max-w-2xl mx-auto transition-colors duration-300">
+                    <p class="text-lg sm:text-xl text-gray-700 dark:text-gray-300 mb-8 font-medium">
+                        Beyond coding, I explore the creative architecture of electronic music, specializing in synthwave, deep house, and ambient soundscapes. You can find my full discography, track samples, and production notes on my dedicated music page.
+                    </p>
+                    
+                    <a href="music.html" class="inline-block bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold py-3 px-8 text-lg rounded-full shadow-lg transition duration-300 transform hover:scale-[1.05]">
+                        Listen to the Discography &rarr;
+                    </a>
+                </div>
+
+            </div>
+        </section>
+        
+        <!-- About Section - Fluid width for readability -->
+        <section id="about" class="py-16 md:py-24 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-center mb-12 text-gray-900 dark:text-gray-100">A Little About Me</h2>
+                
+                <div class="bg-gray-50 dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-inner border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                    <p class="text-lg sm:text-xl leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
+                        I'm Smasduq, a passionate technologist with five years of professional experience across web development and system architecture. My journey started with a fascination for crafting simple, elegant solutions to complex problems. I believe the best code is clean, well-documented, and focused on the end-user.
+                    </p>
+                    <p class="text-lg sm:text-xl leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
+                        When I'm not coding, you can find me exploring new open-source projects or contributing to developer communities. I'm always looking for challenging projects that push the boundaries of modern technology. Let's build something amazing together!
+                    </p>
+                </div>
+                
+            </div>
+        </section>
+
+        <!-- Contact Section - Optimized for Form Submission -->
+        <section id="contact" class="py-16 md:py-24 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl">
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-center mb-12 text-gray-900 dark:text-gray-100">Get in Touch</h2>
+                
+                <p class="text-lg sm:text-xl text-center text-gray-600 dark:text-gray-400 mb-10">
+                    Have a project in mind or just want to say hello? Send me a message!
+                </p>
+
+                <form action="https://formspree.io/f/xdkjbpja" method="POST" class="bg-white dark:bg-gray-900 p-8 sm:p-10 rounded-2xl shadow-2xl dark:shadow-lg border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+                    <div class="mb-5">
+                        <label for="name" class="block text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your Name" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 p-3 sm:p-4 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" required>
+                    </div>
+                    <div class="mb-5">
+                        <label for="_replyto" class="block text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                        <input type="email" id="_replyto" name="_replyto" placeholder="your@email.com" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 p-3 sm:p-4 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" required>
+                    </div>
+                    <div class="mb-8">
+                        <label for="message" class="block text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">Message</label>
+                        <textarea id="message" name="message" rows="4" placeholder="Tell me about your project or idea..." class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 p-3 sm:p-4 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" required></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold py-3 px-10 sm:py-4 sm:px-12 text-lg sm:text-xl rounded-full shadow-lg transition duration-300 transform hover:scale-[1.02]">
+                            Send Message
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-6 text-sm text-gray-500 dark:text-gray-400">
+                    *This form uses <a href="https://formspree.io/" target="_blank" class="underline hover:text-indigo-600 dark:hover:text-indigo-400">Formspree</a> for submission.
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 dark:bg-gray-950 py-10 transition-colors duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400 dark:text-gray-500">
+            <p class="mb-4 text-sm sm:text-lg">&copy; 2025 Smasduq. All rights reserved.</p>
+            <div class="mt-4 space-x-4 sm:space-x-6 text-lg sm:text-xl">
+                <!-- Replace # with actual links -->
+                <a href="https://www.linkedin.com/in/smasduq" target="_blank" class="hover:text-indigo-400 transition duration-300">LinkedIn</a>
+                <a href="https://github.com/Smasduq" target="_blank" class="hover:text-indigo-400 transition duration-300">GitHub</a>
+            
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // --- Dark/Light Mode Logic ---
+
+        // Helper function to update the icon visibility based on the current theme
+        function updateThemeIcons(isDark) {
+            const icons = [
+                { type: 'sun', id: 'sun-icon-desktop' },
+                { type: 'moon', id: 'moon-icon-desktop' },
+                { type: 'sun', id: 'sun-icon-mobile' },
+                { type: 'moon', id: 'moon-icon-mobile' },
+                { type: 'sun', id: 'sun-icon-drawer' },
+                { type: 'moon', id: 'moon-icon-drawer' },
+            ];
+
+            // Use inline style display to explicitly show/hide icons. This
+            // avoids conflicts with utility classes and CSS rules and gives
+            // a deterministic result immediately when toggling.
+            icons.forEach(icon => {
+                const element = document.getElementById(icon.id);
+                if (!element) return;
+                const shouldShow = (isDark && icon.type === 'moon') || (!isDark && icon.type === 'sun');
+                element.style.display = shouldShow ? 'inline' : 'none';
+            });
+        }
+
+        // Apply the theme class to the HTML element and update icons
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+            updateThemeIcons(isDark);
+            // Debug: log computed styles after applying theme to help trace
+            // elements that don't switch.
+            try { debugThemeState('after applyTheme'); } catch (e) { /* ignore */ }
+        }
+
+        // Toggles the theme
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            applyTheme(!isDark);
+        }
+
+        // Initialize the theme on page load
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            let isDark = false;
+            if (savedTheme === 'dark') {
+                isDark = true;
+            } else if (savedTheme === 'light') {
+                isDark = false;
+            } else {
+                // If no saved theme, use system preference
+                isDark = prefersDark;
+            }
+            
+            applyTheme(isDark);
+        }
+
+        // --- Mobile Menu Logic ---
+        function toggleMenu(show) {
+            const drawer = document.getElementById('mobile-menu-drawer');
+            
+            if (show) {
+                drawer.classList.remove('translate-x-full');
+                drawer.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden'; 
+            } else {
+                drawer.classList.add('translate-x-full');
+                drawer.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = 'auto'; 
+            }
+        }
+
+        // Ensure menu closes when clicking a link inside the drawer
+        document.querySelectorAll('#mobile-menu-drawer a').forEach(link => {
+            link.addEventListener('click', () => {
+                toggleMenu(false);
+            });
+        });
+
+        // Initialize theme when the document is ready
+        document.addEventListener('DOMContentLoaded', initTheme);
+
+        // --- Debug helpers -------------------------------------------------
+        // Call `debugThemeState()` in the console or watch the logs when
+        // toggling theme to see which elements keep dark colors.
+        function debugThemeState(label) {
+            const selectors = ['html', 'body', 'header', '#hero', '#work', '#games-showcase', '#music-showcase', '#about', '#contact', 'footer'];
+            console.groupCollapsed('Theme debug:', label || 'state');
+            console.log('localStorage.theme =', localStorage.getItem('theme'));
+            console.log('document.documentElement.className =', document.documentElement.className);
+            selectors.forEach(sel => {
+                const el = document.querySelector(sel);
+                if (!el) return;
+                const cs = getComputedStyle(el);
+                console.log(sel, {
+                    color: cs.color,
+                    backgroundColor: cs.backgroundColor,
+                    className: el.className
+                });
+            });
+            console.groupEnd();
+        }
+
+    </script>
+</body>
+</html>
