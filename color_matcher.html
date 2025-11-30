@@ -5,79 +5,175 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Color Matcher - Smasduq</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Light-mode fallbacks when html is not .dark (pragmatic) */
+        /* Custom Font Setup */
+        body { font-family: 'Inter', sans-serif; }
+
+        /* Light-mode fallbacks for consistency */
         html:not(.dark) .bg-white { background-color: #ffffff !important; }
-        html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
-        html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
-        html:not(.dark) .bg-indigo-50 { background-color: #eef2ff !important; }
-        html:not(.dark) .bg-indigo-100 { background-color: #e0e7ff !important; }
-        html:not(.dark) .bg-green-50 { background-color: #f0fdf4 !important; }
-        html:not(.dark) .bg-green-100 { background-color: #dcfce7 !important; }
-        html:not(.dark) .bg-red-100 { background-color: #fee2e2 !important; }
-        html:not(.dark) .bg-yellow-100 { background-color: #fef3c7 !important; }
-        html:not(.dark) .bg-purple-100 { background-color: #f3e8ff !important; }
 
-        html:not(.dark) .text-gray-900 { color: #0f172a !important; }
-        html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
-        html:not(.dark) .text-gray-700 { color: #374151 !important; }
-        html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
-        html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
-        html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 60;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
 
-        /* Buttons/CTAs fallbacks */
-        html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
-        html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+        
+        /* Ensure the word display text uses the specified color names */
+        #word-display {
+            text-transform: uppercase;
+        }
+        
+        /* Specific colors for the word display */
+        #word-display[style*="red"] { color: #ef4444; }
+        #word-display[style*="blue"] { color: #3b82f6; }
+        #word-display[style*="green"] { color: #10b981; }
+        #word-display[style*="yellow"] { color: #f59e0b; color: #d97706; } /* Using a darker yellow for visibility */
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
 
-    <header class="bg-white dark:bg-gray-900 shadow-md">
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-900 shadow-xl border-b border-gray-100 dark:border-gray-800">
         <nav class="container mx-auto px-6 py-4">
-            <a href="games.html" class="text-lg text-indigo-600 hover:underline">&larr; Back to Game Zone</a>
+            <a href="#" onclick="window.history.back()" class="text-lg text-indigo-600 dark:text-indigo-400 hover:underline font-medium transition-colors duration-300">
+                &larr; Back to Game Zone
+            </a>
         </nav>
     </header>
 
+    <!-- Main Game Area -->
     <main class="container mx-auto px-6 py-10 flex-grow">
         <div class="max-w-xl mx-auto text-center">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">The Color Matcher</h1>
-            <p class="text-lg text-gray-600 mb-8">Click the button that matches the **COLOR OF THE TEXT** (the ink), not the word itself. Ready your reflexes!</p>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-gray-100 mb-4">The Color Matcher</h1>
+            <p class="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">Click the button that matches the <strong class="text-indigo-600 dark:text-indigo-400">COLOR OF THE TEXT</strong> (the ink), not the word itself. Ready your reflexes!</p>
             
-            <div id="game-area" class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-2xl">
+            <div id="game-area" class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl border-t-4 border-indigo-500 transition-colors duration-300">
                 
-                <div class="mb-8 p-4 border-b-2 border-gray-200">
-                    <p id="instruction" class="text-2xl font-semibold text-indigo-600 mb-4">Click "Start" to begin!</p>
-                    <div id="word-display" class="text-6xl font-extrabold" style="min-height: 80px;"></div>
+                <div class="mb-8 p-4 border-b-2 border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                    <p id="instruction" class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400 mb-4 transition-colors duration-300">Click "Start" to begin!</p>
+                    <div id="word-display" class="text-6xl sm:text-7xl font-extrabold" style="min-height: 80px; letter-spacing: 0.1em;"></div>
                 </div>
                 
-                <p id="message" class="text-xl font-medium text-red-500 mb-6">Fastest Time: -- ms</p>
-                <div id="buttons" class="grid grid-cols-2 gap-4">
-                    <button data-color="Red" class="game-button bg-red-500 text-white p-4 rounded-lg text-lg font-semibold hover:bg-red-600 transition duration-150">Red</button>
-                    <button data-color="Blue" class="game-button bg-blue-500 text-white p-4 rounded-lg text-lg font-semibold hover:bg-blue-600 transition duration-150">Blue</button>
-                    <button data-color="Green" class="game-button bg-green-500 text-white p-4 rounded-lg text-lg font-semibold hover:bg-green-600 transition duration-150">Green</button>
-                    <button data-color="Yellow" class="game-button bg-yellow-500 text-gray-800 p-4 rounded-lg text-lg font-semibold hover:bg-yellow-600 transition duration-150">Yellow</button>
+                <p id="fastest-time-display" class="text-xl font-medium text-gray-600 dark:text-gray-300 mb-6">Fastest Time: -- ms</p>
+                
+                <div id="buttons" class="grid grid-cols-2 gap-4 sm:gap-6">
+                    <!-- Added shadow and hover effects for buttons -->
+                    <button data-color="Red" class="game-button bg-red-600 text-white p-4 rounded-xl text-lg font-bold hover:bg-red-700 transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-red-500/50">RED</button>
+                    <button data-color="Blue" class="game-button bg-blue-600 text-white p-4 rounded-xl text-lg font-bold hover:bg-blue-700 transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500/50">BLUE</button>
+                    <button data-color="Green" class="game-button bg-green-600 text-white p-4 rounded-xl text-lg font-bold hover:bg-green-700 transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-500/50">GREEN</button>
+                    <!-- Changed Yellow button text color for visibility -->
+                    <button data-color="Yellow" class="game-button bg-yellow-400 text-gray-900 p-4 rounded-xl text-lg font-bold hover:bg-yellow-500 transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-yellow-500/50">YELLOW</button>
                 </div>
 
-                <button id="start-button" class="mt-8 w-full bg-indigo-500 text-white p-4 rounded-lg text-xl font-bold hover:bg-indigo-600 transition duration-200">START</button>
+                <button id="start-button" class="mt-8 w-full bg-indigo-600 text-white p-4 rounded-xl text-xl font-bold hover:bg-indigo-700 transition duration-200 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/50">START</button>
                 
             </div>
             
-            <div class="mt-12 p-6 bg-white dark:bg-gray-700 rounded-xl shadow-lg">
-                <h3 class="text-2xl font-bold mb-4 text-gray-700 dark:text-white">Local High Scores</h3>
-                <ol id="high-score-list" class="list-decimal list-inside text-left mx-auto max-w-xs text-gray-200 space-y-1">
-                    </ol>
+            <!-- High Score List -->
+            <div class="mt-12 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Top 5 Fastest Times</h3>
+                <ol id="high-score-list" class="list-decimal list-inside text-left mx-auto max-w-xs text-gray-700 dark:text-gray-300 space-y-2">
+                    <!-- Scores will be rendered here -->
+                </ol>
+                <!-- CLEAR SCORES BUTTON -->
+                <button onclick="clearScores()" class="mt-4 text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition duration-150 focus:outline-none">
+                    Clear All Scores
+                </button>
             </div>
         </div>
     </main>
 
+    <!-- CONFIRMATION Modal Overlay (Hidden by default) -->
+    <div id="confirm-modal" class="modal-overlay hidden" aria-modal="true" role="dialog">
+        <div class="modal-content bg-white dark:bg-gray-900 p-8 sm:p-10 rounded-2xl shadow-2xl max-w-sm w-full text-center border-t-8 border-red-500 transition-colors duration-300">
+            
+            <h2 class="text-3xl font-extrabold text-red-600 dark:text-red-400 mb-4">Confirm Score Reset</h2>
+            
+            <p class="text-xl text-gray-700 dark:text-gray-300 mb-6">Are you sure you want to permanently delete all high scores?</p>
+
+            <div class="flex space-x-4">
+                <button onclick="closeConfirmModal()" class="w-1/2 bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-bold py-3 rounded-xl text-lg transition duration-200">
+                    Cancel
+                </button>
+                <button onclick="executeClearScores()" class="w-1/2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-bold py-3 rounded-xl text-lg transition duration-200 shadow-md">
+                    Yes, Clear Scores
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Score Modal Overlay (Hidden by default) -->
+    <div id="score-modal" class="modal-overlay hidden" aria-modal="true" role="dialog">
+        <div class="modal-content bg-white dark:bg-gray-900 p-8 sm:p-10 rounded-2xl shadow-2xl max-w-sm w-full text-center border-t-8 border-indigo-500 transition-colors duration-300">
+            
+            <h2 id="modal-title" class="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-4"></h2>
+            
+            <p id="modal-result" class="text-xl text-gray-700 dark:text-gray-300 mb-6"></p>
+            
+            <div id="modal-score-box" class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8">
+                <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase">Your Reaction Time</p>
+                <p id="modal-time" class="4xl font-black text-indigo-600 dark:text-indigo-400 mt-1"></p>
+            </div>
+
+            <button onclick="hideModalAndRestart()" class="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold py-3 rounded-xl text-lg transition duration-200 shadow-md">
+                Play Again
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 dark:bg-gray-950 py-10 transition-colors duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400 dark:text-gray-500">
+            <p class="mb-4 text-sm sm:text-lg">&copy; 2025 Smasduq. All rights reserved. Enjoy the games!</p>
+            <div class="mt-4 space-x-4 sm:space-x-6 text-lg sm:text-xl">
+                <!-- Replace # with actual links -->
+                <a href="https://www.linkedin.com/in/smasduq" target="_blank" class="hover:text-indigo-400 transition duration-300">LinkedIn</a>
+                <a href="https://github.com/Smasduq" target="_blank" class="hover:text-indigo-400 transition duration-300">GitHub</a>
+            
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script Block -->
     <script>
         // --- Game Setup ---
         const COLORS = ['Red', 'Blue', 'Green', 'Yellow'];
         const wordDisplay = document.getElementById('word-display');
-        const message = document.getElementById('message');
+        const fastestTimeDisplay = document.getElementById('fastest-time-display');
         const startButton = document.getElementById('start-button');
         const buttons = document.querySelectorAll('.game-button');
         const scoreList = document.getElementById('high-score-list');
+        const scoreModal = document.getElementById('score-modal');
+        const confirmModal = document.getElementById('confirm-modal'); // NEW: Confirmation Modal
+        const modalTitle = document.getElementById('modal-title');
+        const modalResult = document.getElementById('modal-result');
+        const modalTime = document.getElementById('modal-time');
 
         let startTime;
         let targetColor;
@@ -88,27 +184,90 @@
         function getRandomItem(arr) {
             return arr[Math.floor(Math.random() * arr.length)];
         }
+        
+        /**
+         * Clears all high scores from local storage and updates the display.
+         * This function now triggers the confirmation modal.
+         */
+        function clearScores() {
+            showConfirmModal();
+        }
 
+        /**
+         * Function to execute the actual score deletion after confirmation.
+         */
+        function executeClearScores() {
+            scoreHistory = [];
+            localStorage.setItem('colorMatcherScores', JSON.stringify(scoreHistory));
+            renderHighScores();
+            closeConfirmModal();
+            console.log("High scores cleared successfully.");
+        }
+
+        // --- Modal Functions ---
+        function showModal(title, resultText, timeMs, isCorrect) {
+            modalTitle.textContent = title;
+            modalResult.textContent = resultText;
+            modalTime.textContent = timeMs !== null ? `${timeMs} ms` : 'N/A';
+            
+            // Apply color based on correctness
+            if (isCorrect) {
+                modalTitle.classList.remove('text-red-600');
+                modalTitle.classList.add('text-green-600');
+            } else {
+                modalTitle.classList.remove('text-green-600');
+                modalTitle.classList.add('text-red-600');
+            }
+
+            scoreModal.classList.add('show');
+            scoreModal.classList.remove('hidden');
+        }
+
+        function hideModalAndRestart() {
+            scoreModal.classList.remove('show');
+            // Use setTimeout to ensure the transition finishes before hiding completely
+            setTimeout(() => scoreModal.classList.add('hidden'), 300);
+            
+            // The user must now click the main 'START' button to begin the next game.
+        }
+        
+        function showConfirmModal() {
+            confirmModal.classList.add('show');
+            confirmModal.classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            confirmModal.classList.remove('show');
+            // Use setTimeout to ensure the transition finishes before hiding completely
+            setTimeout(() => confirmModal.classList.add('hidden'), 300);
+        }
+
+        // --- Game Logic ---
         function renderDisplay() {
             const word = getRandomItem(COLORS);
             targetColor = getRandomItem(COLORS);
 
             // Ensure the word and the color are NOT the same (Stroop Effect)
-            while (word === targetColor) {
+            let attempts = 0;
+            while (word === targetColor && attempts < 5) {
                 targetColor = getRandomItem(COLORS);
+                attempts++;
             }
 
             wordDisplay.textContent = word;
-            wordDisplay.style.color = targetColor.toLowerCase();
+            wordDisplay.style.color = targetColor.toLowerCase(); // Style is set in <style> block
             
+            // Set a small delay for reaction time measurement to start immediately after the word appears
             startTime = Date.now();
         }
 
         function handleStart() {
+            if (isGameRunning) return; 
+            
             isGameRunning = true;
-            startButton.textContent = '...';
-            startButton.disabled = true;
-            message.textContent = 'Click the button matching the INK color!';
+            startButton.classList.add('hidden'); // Hide main start button
+            
+            document.getElementById('instruction').textContent = 'GO! Click the button matching the INK color!';
             
             // Re-enable buttons for the game
             buttons.forEach(button => button.disabled = false);
@@ -119,11 +278,13 @@
         function handleGuess(guessedColor) {
             if (!isGameRunning) return;
 
+            isGameRunning = false;
             const reactionTime = Date.now() - startTime;
 
+            let title, resultText, time, isCorrect;
+
             if (guessedColor === targetColor) {
-                isGameRunning = false;
-                message.textContent = `Correct! Reaction time: ${reactionTime} ms`;
+                // Correct Guess
                 
                 // Add score and update history
                 scoreHistory.push(reactionTime);
@@ -132,15 +293,30 @@
                 localStorage.setItem('colorMatcherScores', JSON.stringify(scoreHistory));
 
                 renderHighScores();
+                
+                title = 'CORRECT!';
+                resultText = `Excellent reflex! Your time:`;
+                time = reactionTime;
+                isCorrect = true;
 
             } else {
-                message.textContent = 'Wrong! Try again.';
+                // Wrong Guess
+                title = 'WRONG MATCH!';
+                resultText = `You clicked ${guessedColor}, but the ink was ${targetColor}.`;
+                time = reactionTime;
+                isCorrect = false;
             }
 
-            startButton.textContent = 'Start New Game';
-            startButton.disabled = false;
-            wordDisplay.textContent = ' ';
-            wordDisplay.style.color = 'black';
+            // Show the result pop-up
+            showModal(title, resultText, time, isCorrect);
+            
+            // Reset display
+            wordDisplay.textContent = '...';
+            wordDisplay.style.color = '#9ca3af'; 
+            document.getElementById('instruction').textContent = 'Game Finished. Click "Play Again" to restart.';
+            
+            // Show the main start button again after the game ends.
+            startButton.classList.remove('hidden'); 
             
             // Disable buttons until new game starts
             buttons.forEach(button => button.disabled = true);
@@ -148,20 +324,22 @@
 
         function renderHighScores() {
             scoreList.innerHTML = ''; // Clear existing scores
+            
             if (scoreHistory.length === 0) {
-                scoreList.innerHTML = '<li class="text-center">No scores yet. Play the game!</li>';
+                scoreList.innerHTML = '<li class="text-center text-gray-400 dark:text-gray-500">No scores yet. Play the game!</li>';
+                fastestTimeDisplay.textContent = 'Fastest Time: -- ms';
                 return;
             }
+            
+            // Update main display with best score
+            fastestTimeDisplay.textContent = `Fastest Time: ${scoreHistory[0]} ms`;
 
             scoreHistory.forEach((score, index) => {
                 const li = document.createElement('li');
-                li.className = index === 0 ? 'font-bold text-indigo-500' : '';
-                li.textContent = `${score} ms`;
+                li.className = index === 0 ? 'font-black text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300';
+                li.innerHTML = `<span class="font-mono">${score}</span> ms`;
                 scoreList.appendChild(li);
             });
-
-            // Update main message with best score
-            message.textContent = `Fastest Time: ${scoreHistory[0]} ms`;
         }
 
         // --- Event Listeners and Initialization ---
@@ -176,11 +354,7 @@
             button.disabled = true; // Disable buttons until start
         });
 
-        // Initial setup
-        renderHighScores();
-    </script>
-    <!-- Theme init: apply saved theme (no icons added) -->
-    <script>
+        // Initialize theme logic (copied from the original file for dark mode consistency)
         (function(){
             try {
                 const saved = localStorage.getItem('theme');
@@ -189,6 +363,9 @@
                 else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
             } catch (e) { /* ignore */ }
         })();
+
+        // Initial setup
+        renderHighScores();
     </script>
 </body>
 </html>
