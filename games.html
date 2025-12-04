@@ -11,6 +11,71 @@
         window.tailwind.config = Object.assign(window.tailwind.config || {}, { darkMode: 'class' });
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        // --- Theme Application and Synchronous Init ---
+        
+        // This function will be defined globally and available after this script runs
+        window.updateThemeIcons = function(isDark) {
+            const icons = [
+                { type: 'sun', id: 'sun-icon-desktop' },
+                { type: 'moon', id: 'moon-icon-desktop' },
+                { type: 'sun', id: 'sun-icon-mobile' },
+                { type: 'moon', id: 'moon-icon-mobile' },
+                { type: 'sun', id: 'sun-icon-drawer' },
+                { type: 'moon', id: 'moon-icon-drawer' },
+            ];
+            icons.forEach(icon => {
+                const el = document.getElementById(icon.id);
+                if (!el) return;
+                const shouldShow = (isDark && icon.type === 'moon') || (!isDark && icon.type === 'sun');
+                el.style.display = shouldShow ? 'inline' : 'none';
+            });
+        };
+
+        window.applyTheme = function(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+            // Update icons immediately if called from an interaction (like a button click)
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                window.updateThemeIcons(isDark);
+            }
+        };
+
+        window.toggleTheme = function() {
+            const isDark = document.documentElement.classList.contains('dark');
+            window.applyTheme(!isDark);
+        };
+        
+        // IIFE runs synchronously to apply the class immediately, preventing FOUC.
+        (function initThemeSync() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            let isDark = false;
+            
+            if (savedTheme === 'dark') isDark = true;
+            else if (savedTheme === 'light') isDark = false;
+            else isDark = prefersDark;
+
+            // Apply theme class directly and synchronously
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+
+        // Once the DOM is loaded, run the icon update logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const isDark = document.documentElement.classList.contains('dark');
+            window.updateThemeIcons(isDark);
+        });
+    </script>
     <style>
         /* Custom Font Setup (Inter is used by default in Tailwind, but specifying it ensures consistency) */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
@@ -23,27 +88,12 @@
             background-size: 40px 40px;
         }
 
-        /* Theme icon defaults (desktop, mobile, drawer) to avoid flashing both icons before JS runs) */
-        /* Desktop */
-        #sun-icon-desktop, #moon-icon-desktop { display: inline; }
-        #moon-icon-desktop { display: none; }
-        /* Mobile */
-        #sun-icon-mobile, #moon-icon-mobile { display: inline; }
-        #moon-icon-mobile { display: none; }
-        /* Drawer */
-        #sun-icon-drawer, #moon-icon-drawer { display: inline; }
-        #moon-icon-drawer { display: none; }
-        @media (prefers-color-scheme: dark) {
-            /* Desktop */
-            #sun-icon-desktop { display: none; }
-            #moon-icon-desktop { display: inline; }
-            /* Mobile */
-            #sun-icon-mobile { display: none; }
-            #moon-icon-mobile { display: inline; }
-            /* Drawer */
-            #sun-icon-drawer { display: none; }
-            #moon-icon-drawer { display: inline; }
-        }
+        /* Theme icon defaults (desktop, mobile, drawer) - The JS handles the final display state */
+        /* We set them to inline here, and the JS updates based on the theme */
+        #sun-icon-desktop, #moon-icon-desktop, 
+        #sun-icon-mobile, #moon-icon-mobile,
+        #sun-icon-drawer, #moon-icon-drawer { display: none; }
+
 
         /* Drawer transition used by mobile menu */
         .drawer-transition { transition: transform 0.25s ease-out; }
@@ -55,29 +105,52 @@
             .search-popup { left: 0.5rem; right: 0.5rem; top: 3.75rem; width: auto; }
         }
 
-    /* Light-mode fallbacks when html is not .dark (pragmatic) */
-    html:not(.dark) .bg-white { background-color: #ffffff !important; }
-    html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
-    html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
-    html:not(.dark) .bg-indigo-50 { background-color: #eef2ff !important; }
-    html:not(.dark) .bg-indigo-100 { background-color: #e0e7ff !important; }
-    html:not(.dark) .bg-green-50 { background-color: #f0fdf4 !important; }
-    html:not(.dark) .bg-green-100 { background-color: #dcfce7 !important; }
-    html:not(.dark) .bg-red-100 { background-color: #fee2e2 !important; }
-    html:not(.dark) .bg-yellow-100 { background-color: #fef3c7 !important; }
-    html:not(.dark) .bg-purple-100 { background-color: #f3e8ff !important; }
+        /* Light-mode fallbacks when html is not .dark (pragmatic) */
+        html:not(.dark) .bg-white { background-color: #ffffff !important; }
+        html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
+        html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
+        html:not(.dark) .bg-indigo-50 { background-color: #eef2ff !important; }
+        html:not(.dark) .bg-indigo-100 { background-color: #e0e7ff !important; }
+        html:not(.dark) .bg-green-50 { background-color: #f0fdf4 !important; }
+        html:not(.dark) .bg-green-100 { background-color: #dcfce7 !important; }
+        html:not(.dark) .bg-red-100 { background-color: #fee2e2 !important; }
+        html:not(.dark) .bg-yellow-100 { background-color: #fef3c7 !important; }
+        html:not(.dark) .bg-purple-100 { background-color: #f3e8ff !important; }
 
-    html:not(.dark) .text-gray-900 { color: #0f172a !important; }
-    html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
-    html:not(.dark) .text-gray-700 { color: #374151 !important; }
-    html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
-    html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
-    html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
+        html:not(.dark) .text-gray-900 { color: #0f172a !important; }
+        html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
+        html:not(.dark) .text-gray-700 { color: #374151 !important; }
+        html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
+        html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
+        html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
 
-    /* Buttons/CTAs fallbacks */
-    html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
-    html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
+        /* Buttons/CTAs fallbacks */
+        html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
+        html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
     </style>
+
+    <script>
+        // Debug helper (kept for development utility)
+        function debugThemeState(label) {
+            const selectors = ['html', 'body', 'header', 'main', 'footer', '.bg-white'];
+            console.groupCollapsed('games.html theme debug:', label || 'state');
+            console.log('localStorage.theme =', localStorage.getItem('theme'));
+            console.log('document.documentElement.className =', document.documentElement.className);
+            selectors.forEach(sel => {
+                const el = document.querySelector(sel);
+                if (!el) return;
+                const cs = getComputedStyle(el);
+                console.log(sel, {
+                    color: cs.color,
+                    backgroundColor: cs.backgroundColor,
+                    className: el.className
+                });
+            });
+            console.groupEnd();
+        }
+    </script>
+
+    
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col">
 
@@ -185,7 +258,7 @@
     </div>
 
     <main class="container mx-auto px-6 py-16 flex-grow">
-        <h1 class="text-5xl dark:text-gray-100 text-center text-gray-900 mb-12">Code Play Zone 🕹️</h1>
+        <h1 class="text-5xl dark:text-gray-100 text-center text-gray-900 mb-12">Code Play Zone </h1>
         
         <!-- Search (searches only game names/h2 titles) -->
         <div class="max-w-2xl mx-auto mb-8">
@@ -241,7 +314,7 @@
     </main>
     
     <!-- Footer -->
-    <footer class="bg-gray-800 dark:bg-gray-950 py-10 transition-colors duration-300">
+    <footer class="bg-gray-100 dark:bg-gray-950 py-10 transition-colors duration-300">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400 dark:text-gray-500">
             <p class="mb-4 text-sm sm:text-lg">&copy; 2025 Smasduq. All rights reserved. Enjoy the games!</p>
             <div class="mt-4 space-x-4 sm:space-x-6 text-lg sm:text-xl">
@@ -253,182 +326,114 @@
         </div>
     </footer>
 
-        <script>
-            // --- Dark/Light Mode Logic (same approach as index.html) ---
-            function updateThemeIcons(isDark) {
-                const icons = [
-                    { type: 'sun', id: 'sun-icon-desktop' },
-                    { type: 'moon', id: 'moon-icon-desktop' },
-                    { type: 'sun', id: 'sun-icon-mobile' },
-                    { type: 'moon', id: 'moon-icon-mobile' },
-                ];
-                icons.forEach(icon => {
-                    const el = document.getElementById(icon.id);
-                    if (!el) return;
-                    const shouldShow = (isDark && icon.type === 'moon') || (!isDark && icon.type === 'sun');
-                    el.style.display = shouldShow ? 'inline' : 'none';
-                });
+    <script>
+        // Mobile menu toggle (drawer)
+        function toggleMenu(show) {
+            const drawer = document.getElementById('mobile-menu-drawer');
+            if (!drawer) return;
+            if (show) {
+                drawer.classList.remove('translate-x-full');
+                drawer.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            } else {
+                drawer.classList.add('translate-x-full');
+                drawer.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = 'auto';
             }
+        }
 
-            function applyTheme(isDark) {
-                if (isDark) {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('theme', 'light');
-                }
-                updateThemeIcons(isDark);
-                // Debug: log computed styles after applying theme to help trace
-                // elements that don't switch.
-                try { debugThemeState('after applyTheme'); } catch (e) { /* ignore */ }
-            }
-
-            function toggleTheme() {
-                const isDark = document.documentElement.classList.contains('dark');
-                applyTheme(!isDark);
-            }
-
-            function initTheme() {
-                const savedTheme = localStorage.getItem('theme');
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                let isDark = false;
-                if (savedTheme === 'dark') isDark = true;
-                else if (savedTheme === 'light') isDark = false;
-                else isDark = prefersDark;
-                applyTheme(isDark);
-            }
-
-            document.addEventListener('DOMContentLoaded', initTheme);
-        </script>
-        <script>
-            // Mobile menu toggle (drawer)
-            function toggleMenu(show) {
-                const drawer = document.getElementById('mobile-menu-drawer');
-                if (!drawer) return;
-                if (show) {
-                    drawer.classList.remove('translate-x-full');
-                    drawer.setAttribute('aria-hidden', 'false');
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    drawer.classList.add('translate-x-full');
-                    drawer.setAttribute('aria-hidden', 'true');
-                    document.body.style.overflow = 'auto';
-                }
-            }
-
-            // Close drawer when a link inside it is clicked
-            document.addEventListener('DOMContentLoaded', function () {
-                document.querySelectorAll('#mobile-menu-drawer a').forEach(link => {
-                    link.addEventListener('click', () => toggleMenu(false));
-                });
+        // Close drawer when a link inside it is clicked
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('#mobile-menu-drawer a').forEach(link => {
+                link.addEventListener('click', () => toggleMenu(false));
             });
-        </script>
-        <script>
-            // --- Games search (filters cards by H2 title only) ---
-            function filterGames(query) {
-                const grid = document.getElementById('games-grid');
-                if (!grid) return;
-                const normalized = (query || '').trim().toLowerCase();
-                let anyVisible = false;
-                document.querySelectorAll('#games-grid > div').forEach(card => {
-                    const h2 = card.querySelector('h2');
-                    const title = h2 ? h2.innerText.trim().toLowerCase() : '';
-                    const match = !normalized || title.includes(normalized);
-                    card.classList.toggle('hidden', !match);
-                    if (match) anyVisible = true;
-                });
-                const noResults = document.getElementById('no-results');
-                if (noResults) noResults.classList.toggle('hidden', anyVisible);
-            }
-
-            document.addEventListener('DOMContentLoaded', function () {
-                const mainInput = document.getElementById('search-input');
-                const popup = document.getElementById('search-popup');
-                const popupInput = document.getElementById('popup-search-input');
-                const popupClear = document.getElementById('popup-clear-button');
-                const btnDesktop = document.getElementById('search-button-desktop');
-                const btnMobile = document.getElementById('search-button-mobile');
-                const clearBtn = document.getElementById('clear-search-button');
-
-                function openPopup() {
-                    if (!popup) return;
-                    popup.classList.remove('hidden');
-                    popup.classList.add('open');
-                    const val = mainInput ? mainInput.value : '';
-                    if (popupInput) { popupInput.value = val; popupInput.focus(); }
-                }
-                function closePopup() {
-                    if (!popup) return;
-                    popup.classList.add('hidden');
-                    popup.classList.remove('open');
-                    if (popupInput) popupInput.blur();
-                }
-                function togglePopup(e) {
-                    if (e) e.stopPropagation();
-                    if (!popup) return;
-                    if (popup.classList.contains('hidden')) openPopup(); else closePopup();
-                }
-
-                // Main input behavior (keeps previous inline search area working)
-                if (mainInput) {
-                    mainInput.addEventListener('input', () => filterGames(mainInput.value));
-                    mainInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); filterGames(mainInput.value); } });
-                }
-
-                // Header icon buttons toggle the popup
-                if (btnDesktop) btnDesktop.addEventListener('click', (e) => togglePopup(e));
-                if (btnMobile) btnMobile.addEventListener('click', (e) => togglePopup(e));
-
-                // Popup input syncs to main input and triggers filter
-                if (popupInput) {
-                    popupInput.addEventListener('input', (ev) => {
-                        const v = ev.target.value;
-                        if (mainInput) mainInput.value = v;
-                        filterGames(v);
-                    });
-                    popupInput.addEventListener('keydown', (e) => {
-                        if (e.key === 'Escape') { closePopup(); }
-                        if (e.key === 'Enter') { e.preventDefault(); filterGames(popupInput.value); }
-                    });
-                }
-
-                // Popup clear button
-                if (popupClear) popupClear.addEventListener('click', () => { if (popupInput) { popupInput.value = ''; filterGames(''); popupInput.focus(); if (mainInput) mainInput.value = ''; } });
-
-                // Clear button in main area
-                if (clearBtn) clearBtn.addEventListener('click', () => { if (mainInput) { mainInput.value = ''; filterGames(''); mainInput.focus(); if (popupInput) popupInput.value = ''; } });
-
-                // Close popup when clicking outside or pressing Escape
-                document.addEventListener('click', (e) => {
-                    if (!popup || popup.classList.contains('hidden')) return;
-                    const target = e.target;
-                    if (popup.contains(target) || target.closest('#search-button-desktop') || target.closest('#search-button-mobile')) return;
-                    closePopup();
-                });
-                document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePopup(); });
+        });
+    </script>
+    <script>
+        // --- Games search (filters cards by H2 title only) ---
+        function filterGames(query) {
+            const grid = document.getElementById('games-grid');
+            if (!grid) return;
+            const normalized = (query || '').trim().toLowerCase();
+            let anyVisible = false;
+            document.querySelectorAll('#games-grid > div').forEach(card => {
+                const h2 = card.querySelector('h2');
+                const title = h2 ? h2.innerText.trim().toLowerCase() : '';
+                const match = !normalized || title.includes(normalized);
+                card.classList.toggle('hidden', !match);
+                if (match) anyVisible = true;
             });
-        </script>
-        <script>
-            // Debug helper
-            function debugThemeState(label) {
-                const selectors = ['html', 'body', 'header', 'main', 'footer', '.bg-white'];
-                console.groupCollapsed('games.html theme debug:', label || 'state');
-                console.log('localStorage.theme =', localStorage.getItem('theme'));
-                console.log('document.documentElement.className =', document.documentElement.className);
-                selectors.forEach(sel => {
-                    const el = document.querySelector(sel);
-                    if (!el) return;
-                    const cs = getComputedStyle(el);
-                    console.log(sel, {
-                        color: cs.color,
-                        backgroundColor: cs.backgroundColor,
-                        className: el.className
-                    });
-                });
-                console.groupEnd();
-            }
-        </script>
+            const noResults = document.getElementById('no-results');
+            if (noResults) noResults.classList.toggle('hidden', anyVisible);
+        }
 
-    </body>
-    </html>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mainInput = document.getElementById('search-input');
+            const popup = document.getElementById('search-popup');
+            const popupInput = document.getElementById('popup-search-input');
+            const popupClear = document.getElementById('popup-clear-button');
+            const btnDesktop = document.getElementById('search-button-desktop');
+            const btnMobile = document.getElementById('search-button-mobile');
+            const clearBtn = document.getElementById('clear-search-button');
+
+            function openPopup() {
+                if (!popup) return;
+                popup.classList.remove('hidden');
+                popup.classList.add('open');
+                const val = mainInput ? mainInput.value : '';
+                if (popupInput) { popupInput.value = val; popupInput.focus(); }
+            }
+            function closePopup() {
+                if (!popup) return;
+                popup.classList.add('hidden');
+                popup.classList.remove('open');
+                if (popupInput) popupInput.blur();
+            }
+            function togglePopup(e) {
+                if (e) e.stopPropagation();
+                if (!popup) return;
+                if (popup.classList.contains('hidden')) openPopup(); else closePopup();
+            }
+
+            // Main input behavior (keeps previous inline search area working)
+            if (mainInput) {
+                mainInput.addEventListener('input', () => filterGames(mainInput.value));
+                mainInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); filterGames(mainInput.value); } });
+            }
+
+            // Header icon buttons toggle the popup
+            if (btnDesktop) btnDesktop.addEventListener('click', (e) => togglePopup(e));
+            if (btnMobile) btnMobile.addEventListener('click', (e) => togglePopup(e));
+
+            // Popup input syncs to main input and triggers filter
+            if (popupInput) {
+                popupInput.addEventListener('input', (ev) => {
+                    const v = ev.target.value;
+                    if (mainInput) mainInput.value = v;
+                    filterGames(v);
+                });
+                popupInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') { closePopup(); }
+                    if (e.key === 'Enter') { e.preventDefault(); filterGames(popupInput.value); }
+                });
+            }
+
+            // Popup clear button
+            if (popupClear) popupClear.addEventListener('click', () => { if (popupInput) { popupInput.value = ''; filterGames(''); popupInput.focus(); if (mainInput) mainInput.value = ''; } });
+
+            // Clear button in main area
+            if (clearBtn) clearBtn.addEventListener('click', () => { if (mainInput) { mainInput.value = ''; filterGames(''); mainInput.focus(); if (popupInput) popupInput.value = ''; } });
+
+            // Close popup when clicking outside or pressing Escape
+            document.addEventListener('click', (e) => {
+                if (!popup || popup.classList.contains('hidden')) return;
+                const target = e.target;
+                if (popup.contains(target) || target.closest('#search-button-desktop') || target.closest('#search-button-mobile')) return;
+                closePopup();
+            });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePopup(); });
+        });
+    </script>
+        
+</body>
+</html>

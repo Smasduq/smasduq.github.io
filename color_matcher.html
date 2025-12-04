@@ -10,9 +10,6 @@
         /* Custom Font Setup */
         body { font-family: 'Inter', sans-serif; }
 
-        /* Light-mode fallbacks for consistency */
-        html:not(.dark) .bg-white { background-color: #ffffff !important; }
-
         /* Modal specific styles */
         .modal-overlay {
             position: fixed;
@@ -53,16 +50,63 @@
         #word-display[style*="red"] { color: #ef4444; }
         #word-display[style*="blue"] { color: #3b82f6; }
         #word-display[style*="green"] { color: #10b981; }
-        #word-display[style*="yellow"] { color: #f59e0b; color: #d97706; } /* Using a darker yellow for visibility */
+        #word-display[style*="yellow"] { color: #f59e0b; color: #d97706; }
+
+        /* Icon visibility when dark mode is explicitly set */
+        html.dark #sun-icon-desktop, html.dark #sun-icon-mobile, html.dark #sun-icon-drawer { display: none; }
+        html.dark #moon-icon-desktop, html.dark #moon-icon-mobile, html.dark #moon-icon-drawer { display: inline; }
+
+        /* Fallback colors for elements that don't switch properly */
+        html:not(.dark) .bg-white { background-color: #ffffff !important; }
+        html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
+        html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
+        html:not(.dark) .bg-gray-200 { background-color: #e5e7eb !important; }
+        html:not(.dark) .bg-gray-800 { background-color: transparent !important; }
+        html:not(.dark) .bg-gray-900 { background-color: transparent !important; }
+
+        html:not(.dark) .text-gray-900 { color: #0f172a !important; }
+        html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
+        html:not(.dark) .text-gray-700 { color: #374151 !important; }
+        html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
+        html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
+        html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
+        html:not(.dark) .text-gray-300 { color: #d1d5db !important; }
+        html:not(.dark) .text-gray-100 { color: #f3f4f6 !important; }
+
+        /* Buttons/CTAs fallbacks */
+        html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
+        html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
 
     <!-- Header -->
-    <header class="bg-white dark:bg-gray-900 shadow-xl border-b border-gray-100 dark:border-gray-800">
+    <header class="bg-white dark:bg-gray-800 shadow-xl border-b border-gray-100 dark:border-gray-800">
         <nav class="container mx-auto px-6 py-4">
-            <a href="#" onclick="window.history.back()" class="text-lg text-indigo-600 dark:text-indigo-400 hover:underline font-medium transition-colors duration-300">
-                &larr; Back to Game Zone
+            <!-- Back to Game Zone Icon Link: Now with Go-Back arrow for clarity -->
+            <a href="games.html" onclick="window.history.back()" title="Back to Game Zone" class="text-indigo-600 dark:text-indigo-400 p-2 rounded-full transition duration-300 
+                hover:text-indigo-500 dark:hover:text-indigo-300 
+                hover:bg-indigo-100/20 dark:hover:bg-indigo-900/40 
+                transform hover:scale-110 
+                inline-flex items-center shadow-lg hover:shadow-xl">
+                
+                <!-- Arrow Left SVG for clear back navigation -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1.5">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                
+                <!-- Gamepad Icon SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7">
+                    <rect x="2" y="4" width="20" height="16" rx="3" ry="3"></rect>
+                    <line x1="6" y1="10" x2="6" y2="14"></line>
+                    <line x1="8" y1="12" x2="4" y2="12"></line>
+                    <line x1="18" y1="10" x2="18" y2="14"></line>
+                    <line x1="20" y1="12" x2="16" y2="12"></line>
+                    <line x1="10" y1="16" x2="14" y2="16"></line>
+                    <line x1="12" y1="18" x2="12" y2="14"></line>
+                </svg>
+                <span class="sr-only">Back to Game Zone</span>
             </a>
         </nav>
     </header>
@@ -148,7 +192,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 dark:bg-gray-950 py-10 transition-colors duration-300">
+    <footer class="bg-gray-100 dark:bg-gray-950 py-10 transition-colors duration-300 border-b border-gray-100 dark:border-gray-800">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400 dark:text-gray-500">
             <p class="mb-4 text-sm sm:text-lg">&copy; 2025 Smasduq. All rights reserved. Enjoy the games!</p>
             <div class="mt-4 space-x-4 sm:space-x-6 text-lg sm:text-xl">

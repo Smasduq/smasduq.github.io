@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Target Blitz: The 30-Second Challenge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Font Setup */
+        body { font-family: 'Inter', sans-serif; }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 60;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+        
+        /* Utility styles for dark/light consistency */
+        html:not(.dark) .bg-white { background-color: #ffffff !important; }
+        html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
+        html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
+        html:not(.dark) .bg-gray-200 { background-color: #e5e7eb !important; }
+
+        html:not(.dark) .text-gray-900 { color: #0f172a !important; }
+        html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
+        
+        html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
+        html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
+
+        /* Target specific styles */
+        #target {
+            /* Ensures smooth transition when target spawns/despawns */
+            transition: all 0.1s ease-out; 
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Header (Navigation/Back Button) -->
+    <header class="bg-white dark:bg-gray-800 shadow-xl border-b border-gray-100 dark:border-gray-800">
+        <nav class="container mx-auto px-6 py-4">
+            <!-- Back to Game Zone Icon Link (Reusing the structure from the previous example) -->
+            <a href="#" onclick="window.history.back()" title="Back to Game Zone" class="text-indigo-600 dark:text-indigo-400 p-2 rounded-full transition duration-300 
+                hover:text-indigo-500 dark:hover:text-indigo-300 
+                hover:bg-indigo-100/20 dark:hover:bg-indigo-900/40 
+                transform hover:scale-110 
+                inline-flex items-center shadow-lg hover:shadow-xl">
+                
+                <!-- Arrow Left SVG for clear back navigation -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1.5">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                
+                <!-- Gamepad Icon SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7">
+                    <rect x="2" y="4" width="20" height="16" rx="3" ry="3"></rect>
+                    <line x1="6" y1="10" x2="6" y2="14"></line>
+                    <line x1="8" y1="12" x2="4" y2="12"></line>
+                    <line x1="18" y1="10" x2="18" y2="14"></line>
+                    <line x1="20" y1="12" x2="16" y2="12"></line>
+                    <line x1="10" y1="16" x2="14" y2="16"></line>
+                    <line x1="12" y1="18" x2="12" y2="14"></line>
+                </svg>
+                <span class="sr-only">Back to Game Zone</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Game Area -->
+    <main class="container mx-auto px-6 py-10 flex-grow">
+        <div class="max-w-xl mx-auto text-center">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-gray-100 mb-4">Target Blitz: 30-Second Challenge</h1>
+            <p class="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">Click the red target circle as many times as you can in <strong class="text-indigo-600 dark:text-indigo-400">30 seconds</strong>. Good luck!</p>
+            
+            <div id="game-area-container" class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl border-t-4 border-indigo-500 transition-colors duration-300">
+                
+                <!-- Display Area: Timer and Score -->
+                <div class="mb-8 p-4 grid grid-cols-2 gap-4 border-b-2 border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                    <div>
+                        <p class="text-base font-semibold text-gray-500 dark:text-gray-400 uppercase">Time Remaining</p>
+                        <p id="timer-display" class="text-3xl font-black text-red-600 dark:text-red-400 mt-1">30</p>
+                    </div>
+                    <div>
+                        <p class="text-base font-semibold text-gray-500 dark:text-gray-400 uppercase">Score (Clicks)</p>
+                        <p id="score-display" class="text-3xl font-black text-indigo-600 dark:text-indigo-400 mt-1">0</p>
+                    </div>
+                </div>
+
+                <p id="instruction" class="text-xl font-semibold text-indigo-600 dark:text-indigo-400 mb-6 transition-colors duration-300">Click "Start Blitz" to begin!</p>
+                
+                <p id="high-score-display" class="text-xl font-medium text-gray-600 dark:text-gray-300 mb-6">High Score: 0 Clicks</p>
+
+                <!-- Target Area -->
+                <div id="target-area" class="relative bg-gray-100 dark:bg-gray-700 h-96 w-full rounded-xl overflow-hidden cursor-crosshair border-2 border-dashed border-gray-300 dark:border-gray-600" onclick="handleMiss(event)">
+                    <!-- The target circle will be absolutely positioned here -->
+                    <!-- scale-0 makes it invisible until the game starts -->
+                    <div id="target" class="absolute w-12 h-12 bg-red-600 rounded-full transition-transform duration-100 ease-out transform scale-0 shadow-xl cursor-pointer hover:scale-105 active:scale-95" style="top: 50%; left: 50%;" onclick="handleTargetClick(event)"></div>
+                </div>
+
+                <button id="start-button" class="mt-8 w-full bg-indigo-600 text-white p-4 rounded-xl text-xl font-bold hover:bg-indigo-700 transition duration-200 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/50">START BLITZ</button>
+                
+            </div>
+            
+            <!-- High Score List (Only showing the single high score now) -->
+            <div class="mt-12 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">High Score</h3>
+                <p id="current-high-score" class="text-3xl font-black text-green-600 dark:text-green-400">0 Clicks</p>
+                <!-- CLEAR SCORES BUTTON -->
+                <button onclick="clearScores()" class="mt-4 text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition duration-150 focus:outline-none">
+                    Reset High Score
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- CONFIRMATION Modal Overlay (Hidden by default) -->
+    <div id="confirm-modal" class="modal-overlay hidden" aria-modal="true" role="dialog">
+        <div class="modal-content bg-white dark:bg-gray-900 p-8 sm:p-10 rounded-2xl shadow-2xl max-w-sm w-full text-center border-t-8 border-red-500 transition-colors duration-300">
+            
+            <h2 class="text-3xl font-extrabold text-red-600 dark:text-red-400 mb-4">Confirm Score Reset</h2>
+            
+            <p class="text-xl text-gray-700 dark:text-gray-300 mb-6">Are you sure you want to permanently reset the high score?</p>
+
+            <div class="flex space-x-4">
+                <button onclick="closeConfirmModal()" class="w-1/2 bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-bold py-3 rounded-xl text-lg transition duration-200">
+                    Cancel
+                </button>
+                <button onclick="executeClearScores()" class="w-1/2 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white font-bold py-3 rounded-xl text-lg transition duration-200 shadow-md">
+                    Yes, Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Score Modal Overlay (Hidden by default) -->
+    <div id="score-modal" class="modal-overlay hidden" aria-modal="true" role="dialog">
+        <div class="modal-content bg-white dark:bg-gray-900 p-8 sm:p-10 rounded-2xl shadow-2xl max-w-sm w-full text-center border-t-8 border-indigo-500 transition-colors duration-300">
+            
+            <h2 id="modal-title" class="text-3xl font-extrabold text-green-600 dark:text-green-400 mb-4">TIME'S UP!</h2>
+            
+            <p id="modal-result" class="text-xl text-gray-700 dark:text-gray-300 mb-6">You hit the target a total of:</p>
+            
+            <div id="modal-score-box" class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8">
+                <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase">Final Score</p>
+                <p id="modal-score" class="4xl font-black text-indigo-600 dark:text-indigo-400 mt-1"></p>
+            </div>
+
+            <button onclick="hideModalAndRestart()" class="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold py-3 rounded-xl text-lg transition duration-200 shadow-md">
+                Try Again
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 dark:bg-gray-950 py-10 transition-colors duration-300 border-b border-gray-100 dark:border-gray-800">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400 dark:text-gray-500">
+            <p class="mb-4 text-sm sm:text-lg">&copy; 2025 Reaction Tests. All rights reserved. Enjoy the games!</p>
+            <div class="mt-4 space-x-4 sm:space-x-6 text-lg sm:text-xl">
+                <a href="https://www.linkedin.com" target="_blank" class="hover:text-indigo-400 transition duration-300">LinkedIn</a>
+                <a href="https://github.com" target="_blank" class="hover:text-indigo-400 transition duration-300">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script Block -->
+    <script>
+        // --- Game Constants and Setup ---
+        const GAME_DURATION = 30; // seconds
+        const TARGET_SIZE = 48; // w-12 h-12 in pixels (12 * 4 = 48px in Tailwind scale)
+
+        // DOM elements
+        const targetArea = document.getElementById('target-area');
+        const target = document.getElementById('target');
+        const scoreDisplay = document.getElementById('score-display');
+        const timerDisplay = document.getElementById('timer-display');
+        const highScoreDisplay = document.getElementById('high-score-display');
+        const currentHighScoreText = document.getElementById('current-high-score');
+        const startButton = document.getElementById('start-button');
+        const scoreModal = document.getElementById('score-modal');
+        const confirmModal = document.getElementById('confirm-modal');
+        const modalScore = document.getElementById('modal-score');
+
+        // Game State Variables
+        let score = 0;
+        let countdown = GAME_DURATION;
+        let timerId = null;
+        let isGameRunning = false;
+        
+        // High Score Storage
+        let highScore = parseInt(localStorage.getItem('targetBlitzHighScore')) || 0;
+
+        // --- Utility Functions ---
+        
+        /**
+         * Generates a random integer between min (inclusive) and max (inclusive).
+         */
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // --- Scoring and High Score Management ---
+        
+        /**
+         * Updates the display for the high score.
+         */
+        function renderHighScore() {
+            highScoreDisplay.textContent = `High Score: ${highScore} Clicks`;
+            currentHighScoreText.textContent = `${highScore} Clicks`;
+        }
+        
+        /**
+         * Clears the high score (triggers confirmation modal).
+         */
+        function clearScores() {
+            showConfirmModal();
+        }
+
+        /**
+         * Executes the actual score reset after confirmation.
+         */
+        function executeClearScores() {
+            highScore = 0;
+            localStorage.setItem('targetBlitzHighScore', '0');
+            renderHighScore();
+            closeConfirmModal();
+            console.log("Target Blitz high score reset successfully.");
+        }
+
+        // --- Timer Functions ---
+
+        /**
+         * Starts the 1-second interval timer.
+         */
+        function startTimer() {
+            countdown = GAME_DURATION;
+            timerDisplay.textContent = countdown;
+            
+            timerId = setInterval(() => {
+                countdown--;
+                timerDisplay.textContent = countdown;
+                
+                // Flash the timer red for the last 5 seconds
+                if (countdown <= 5 && countdown > 0) {
+                     timerDisplay.classList.remove('text-indigo-600', 'dark:text-indigo-400');
+                     timerDisplay.classList.add('text-red-600', 'dark:text-red-400', 'animate-pulse');
+                } else if (countdown > 5) {
+                     timerDisplay.classList.remove('text-red-600', 'dark:text-red-400', 'animate-pulse');
+                     timerDisplay.classList.add('text-indigo-600', 'dark:text-indigo-400');
+                }
+                
+                if (countdown <= 0) {
+                    clearInterval(timerId);
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        // --- Target/Game Functions ---
+
+        /**
+         * Spawns the target at a new random location within the boundaries.
+         */
+        function spawnTarget() {
+            const areaWidth = targetArea.offsetWidth;
+            const areaHeight = targetArea.offsetHeight;
+
+            // Calculate max available space for the target center, ensuring it stays fully inside
+            const maxX = areaWidth - TARGET_SIZE;
+            const maxY = areaHeight - TARGET_SIZE;
+
+            if (maxX <= 0 || maxY <= 0) {
+                 // Fallback for very small screens
+                 console.warn("Target area too small. Target position might be centered.");
+                 target.style.left = '50%';
+                 target.style.top = '50%';
+            } else {
+                const newX = getRandomInt(0, maxX);
+                const newY = getRandomInt(0, maxY);
+                target.style.left = `${newX}px`;
+                target.style.top = `${newY}px`;
+            }
+
+            // Make target visible and interactive
+            target.classList.remove('scale-0');
+        }
+
+        /**
+         * Handles the start of a new game.
+         */
+        function handleStart() {
+            if (isGameRunning) return; 
+            
+            isGameRunning = true;
+            score = 0;
+            scoreDisplay.textContent = score;
+
+            startButton.classList.add('hidden');
+            document.getElementById('instruction').textContent = 'BLITZ MODE! Click, click, click!';
+            
+            startTimer();
+            // Set initial position and start the first click measurement
+            spawnTarget();
+        }
+
+        /**
+         * Handles a successful click on the target.
+         */
+        function handleTargetClick(e) {
+            e.stopPropagation(); // Prevent the click from bubbling up to the target area (handleMiss)
+            if (!isGameRunning) return;
+
+            score++;
+            scoreDisplay.textContent = score;
+
+            // Despawn (shrink) and immediately respawn in a new spot
+            target.classList.add('scale-0');
+            // Use a very short timeout to ensure the CSS transition to scale-0 is applied before the new position is set
+            setTimeout(spawnTarget, 50); 
+        }
+
+        /**
+         * Handles a click outside the target (a miss).
+         */
+        function handleMiss(e) {
+             if (!isGameRunning) return;
+             
+             // Add a visual penalty/feedback for missing the target area
+             targetArea.classList.add('ring-4', 'ring-yellow-500/50', 'animate-pulse');
+             setTimeout(() => {
+                targetArea.classList.remove('ring-4', 'ring-yellow-500/50', 'animate-pulse');
+             }, 300);
+        }
+
+
+        /**
+         * Ends the game and displays the final score.
+         */
+        function endGame() {
+            isGameRunning = false;
+            
+            // Clear any active timer intervals
+            if (timerId) {
+                clearInterval(timerId);
+            }
+
+            // Hide the target
+            target.classList.add('scale-0');
+
+            startButton.classList.remove('hidden'); 
+            document.getElementById('instruction').textContent = 'Time expired. Check your score below!';
+            
+            // Check for new High Score
+            let isNewHighScore = false;
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('targetBlitzHighScore', highScore.toString());
+                renderHighScore();
+                isNewHighScore = true;
+            }
+
+            showModal(score, isNewHighScore);
+        }
+
+
+        // --- Modal Functions ---
+        
+        function showModal(finalScore, isNewHighScore) {
+            const modalTitle = document.getElementById('modal-title');
+            const modalResult = document.getElementById('modal-result');
+            const headerElement = document.getElementById('score-modal').querySelector('.border-t-8');
+
+            modalScore.textContent = `${finalScore} Clicks`;
+            
+            if (isNewHighScore) {
+                modalTitle.textContent = 'NEW HIGH SCORE!';
+                modalResult.textContent = `Phenomenal performance! You hit the target ${finalScore} times!`;
+                headerElement.classList.remove('border-indigo-500');
+                headerElement.classList.add('border-green-500');
+                modalTitle.classList.remove('text-indigo-600', 'dark:text-indigo-400');
+                modalTitle.classList.add('text-green-600', 'dark:text-green-400');
+            } else {
+                modalTitle.textContent = 'TIME\'S UP!';
+                modalResult.textContent = `You scored a total of ${finalScore} clicks.`;
+                headerElement.classList.remove('border-green-500');
+                headerElement.classList.add('border-indigo-500');
+                modalTitle.classList.remove('text-green-600', 'dark:text-green-400');
+                modalTitle.classList.add('text-indigo-600', 'dark:text-indigo-400');
+            }
+
+            scoreModal.classList.add('show');
+            scoreModal.classList.remove('hidden');
+        }
+
+        function hideModalAndRestart() {
+            scoreModal.classList.remove('show');
+            setTimeout(() => {
+                scoreModal.classList.add('hidden');
+            }, 300);
+            
+            // Reset timer display
+            timerDisplay.textContent = GAME_DURATION;
+            timerDisplay.classList.remove('text-red-600', 'dark:text-red-400', 'animate-pulse');
+            timerDisplay.classList.add('text-indigo-600', 'dark:text-indigo-400');
+        }
+        
+        function showConfirmModal() {
+            confirmModal.classList.add('show');
+            confirmModal.classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            confirmModal.classList.remove('show');
+            setTimeout(() => confirmModal.classList.add('hidden'), 300);
+        }
+        
+        // --- Initialization ---
+
+        startButton.addEventListener('click', handleStart);
+
+        // Initialize theme logic
+        (function(){
+            try {
+                const saved = localStorage.getItem('theme');
+                if (saved === 'dark') document.documentElement.classList.add('dark');
+                else if (saved === 'light') document.documentElement.classList.remove('dark');
+                else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
+            } catch (e) { /* ignore */ }
+        })();
+
+        // Initial setup
+        renderHighScore();
+    </script>
+</body>
+</html>

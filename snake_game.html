@@ -3,33 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Game - JavaScript Logic Demo</title>
+    <title>SNAKE Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         /* Custom CSS for Game Aesthetics */
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif;
+            /* Default: Light Mode */
+            transition: background-color 0.3s, color 0.3s;
+        }
         
+        /* Retro Font for Game Elements */
         .font-retro {
-            font-family: 'Press+Start+2P', cursive;
+            font-family: 'Press Start 2P', cursive;
         }
 
-        /* Container to manage responsive canvas size */
+        /* Responsive Canvas Container */
         .canvas-container {
             width: 100%;
-            /* 1:1 Aspect Ratio hack: padding-top equal to width */
             padding-top: 100%; 
             position: relative;
-            max-width: 400px; /* Keep max size the same */
+            max-width: 400px; 
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Dark mode shadow */
+        .dark .canvas-container {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
         }
 
         #gameCanvas {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            border: 4px solid #1a202c; /* Darker border */
-            border-radius: 8px;
-            background-color: #e2e8f0; /* Light gray background */
-            touch-action: none; /* Prevents mobile scrolling when swiping on canvas */
+            border: 4px solid #1a202c; 
+            background-color: #f7fafc; /* Canvas background remains fixed light for visibility */
+            touch-action: none; 
             
-            /* Make canvas fill its responsive container */
             position: absolute;
             top: 0;
             left: 0;
@@ -37,56 +47,128 @@
             height: 100%;
         }
 
-        /* Styling for the control pad: Now only setting fixed size */
+        /* Styling for the control pad buttons (Light Mode Default) */
         .control-btn {
             min-width: 60px;
             min-height: 60px;
+            background-color: #d1d5db; /* Gray-300 */
+            color: #1f2937; /* Gray-800 */
+            transition: all 0.15s ease-in-out;
+            box-shadow: 0 4px #9ca3af; /* Gray shadow */
+            border-radius: 8px;
         }
+        .control-btn:hover { background-color: #e5e7eb; } /* Gray-200 */
+        .control-btn:active { background-color: #9ca3af; box-shadow: 0 0 #9ca3af; transform: translateY(4px); }
+        
+        /* Dark Mode Button Overrides */
+        .dark .control-btn {
+            background-color: #374151; /* Gray-700 */
+            color: #f3f4f6; /* Gray-100 */
+            box-shadow: 0 4px #1f2937; /* Darker shadow */
+        }
+        .dark .control-btn:hover { background-color: #4b5563; } /* Gray-600 */
+        .dark .control-btn:active { background-color: #1f2937; box-shadow: 0 0 #1f2937; transform: translateY(4px); }
+
+        /* Start Button Styling (Light Mode Default) */
+        #startBtn {
+            box-shadow: 0 4px #10b981; /* Green shadow */
+        }
+        #startBtn.bg-green-600:active { box-shadow: 0 0 #10b981; }
+        
+        /* Dark Mode Start Button Overrides */
+        .dark #startBtn {
+            box-shadow: 0 4px #16a34a; /* Darker green shadow */
+        }
+        .dark #startBtn.bg-green-600:active { box-shadow: 0 0 #16a34a; }
+        
+        /* Restart Button Styling */
+        #startBtn.bg-red-600 {
+            box-shadow: 0 4px #dc2626; /* Red shadow */
+        }
+        #startBtn.bg-red-600:active {
+            box-shadow: 0 0 #dc2626;
+        }
+
+        html:not(.dark) .bg-red-100 { background-color: #fee2e2 !important; }
+        html:not(.dark) .bg-yellow-100 { background-color: #fef3c7 !important; }
+        html:not(.dark) .bg-purple-100 { background-color: #f3e8ff !important; }
+
+        html:not(.dark) .text-gray-900 { color: #0f172a !important; }
+        html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
+        html:not(.dark) .text-gray-700 { color: #374151 !important; }
+        html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
+        html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
+        html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
+
+        /* Buttons/CTAs fallbacks */
+        html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
+        html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
+
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
 
-    <div class="flex flex-col items-center max-w-lg w-full">
+    <!-- Header -->
+    <header class="py-4 text-center relative">
+        <h1 class="font-retro text-4xl sm:text-5xl text-green-600 dark:text-yellow-400 drop-shadow-md">SNAKE</h1>
         
-        <h1 class="font-retro text-4xl mb-6 text-green-400 drop-shadow-lg">SNAKE</h1>
-        
-        <!-- Game Canvas Container (Responsive) -->
-        <div class="canvas-container mb-6">
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
-        </div>
-        
-        <!-- Score and Status -->
-        <div class="flex justify-between w-full max-w-sm mb-8 px-2">
-            <div class="font-retro text-lg">Score: <span id="score">0</span></div>
-            <div id="gameStatus" class="font-retro text-lg text-yellow-400">Ready</div>
-        </div>
+        <!-- Theme Toggle Button -->
+        <button id="themeToggle" class="absolute top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300" aria-label="Toggle theme">
+            <!-- Icon placeholder - replaced by JS based on mode -->
+            <svg id="sunIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            <svg id="moonIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+    </header>
 
-        <!-- Touch/Keyboard Controls for Mobile -->
-        <div id="controls" class="w-full max-w-xs flex flex-col items-center lg:hidden">
-            <p class="text-xs text-gray-400 mb-3 font-retro text-center">Use the buttons below to control the snake on your phone!</p>
+    <!-- Main Game Area -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="flex flex-col items-center w-full max-w-lg">
             
-            <!-- Up button - NOW WITH TAILWIND CLASSES APPLIED DIRECTLY -->
-            <button id="upBtn" class="control-btn mb-1 bg-gray-700 text-white font-retro text-sm p-4 rounded-lg shadow-md hover:bg-gray-600 transition duration-150 active:bg-gray-900 active:shadow-inner">↑</button>
-
-            <div class="flex justify-center space-x-2 mb-1">
-                <!-- Left button - NOW WITH TAILWIND CLASSES APPLIED DIRECTLY -->
-                <button id="leftBtn" class="control-btn bg-gray-700 text-white font-retro text-sm p-4 rounded-lg shadow-md hover:bg-gray-600 transition duration-150 active:bg-gray-900 active:shadow-inner">←</button>
-                <!-- Start/Restart button -->
-                <button id="startBtn" class="bg-green-600 hover:bg-green-500 text-white font-retro text-sm p-4 rounded-lg shadow-md active:bg-green-800 transition duration-150">Start</button>
-                <!-- Right button - NOW WITH TAILWIND CLASSES APPLIED DIRECTLY -->
-                <button id="rightBtn" class="control-btn bg-gray-700 text-white font-retro text-sm p-4 rounded-lg shadow-md hover:bg-gray-600 transition duration-150 active:bg-gray-900 active:shadow-inner">→</button>
+            <!-- Game Canvas Container (Responsive) -->
+            <div class="canvas-container mb-6 border-4 border-gray-900 dark:border-gray-700">
+                <canvas id="gameCanvas" width="400" height="400"></canvas>
             </div>
             
-            <!-- Down button - NOW WITH TAILWIND CLASSES APPLIED DIRECTLY -->
-            <button id="downBtn" class="control-btn bg-gray-700 text-white font-retro text-sm p-4 rounded-lg shadow-md hover:bg-gray-600 transition duration-150 active:bg-gray-900 active:shadow-inner">↓</button>
-        </div>
-        
-        <!-- Desktop Hint -->
-        <div class="hidden lg:block text-center text-gray-500 mt-4">
-            <p class="font-retro text-sm">Use the Arrow Keys ($\leftarrow$, $\uparrow$, $\rightarrow$, $\downarrow$) to play.</p>
-        </div>
+            <!-- Score and Status -->
+            <div class="flex justify-between w-full max-w-sm mb-8 px-2 bg-gray-200 dark:bg-gray-800 p-3 rounded-lg shadow-inner border border-gray-300 dark:border-gray-700">
+                <div class="font-retro text-sm sm:text-lg text-gray-600 dark:text-gray-300">Score: <span id="score" class="text-green-600 dark:text-yellow-400">0</span></div>
+                <div id="gameStatus" class="font-retro text-sm sm:text-lg text-yellow-600 dark:text-yellow-400">Ready</div>
+            </div>
 
-    </div>
+            <!-- Touch/Keyboard Controls for Mobile -->
+            <div id="controls" class="w-full max-w-xs flex flex-col items-center">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 font-retro text-center">Use the buttons or swipe the canvas to play!</p>
+                
+                <!-- Up button -->
+                <button id="upBtn" class="control-btn mb-1 font-retro text-sm p-3">↑</button>
+
+                <div class="flex justify-center space-x-2 mb-1 w-full">
+                    <!-- Left button -->
+                    <button id="leftBtn" class="control-btn flex-1 font-retro text-sm p-3">←</button>
+                    <!-- Start/Restart button -->
+                    <button id="startBtn" class="flex-1 bg-green-600 hover:bg-green-500 text-white font-retro text-sm p-3 rounded-lg transition duration-150">Start</button>
+                    <!-- Right button -->
+                    <button id="rightBtn" class="control-btn flex-1 font-retro text-sm p-3">→</button>
+                </div>
+                
+                <!-- Down button -->
+                <button id="downBtn" class="control-btn font-retro text-sm p-3">↓</button>
+            </div>
+            
+            <!-- Desktop Hint -->
+            <div class="hidden md:block text-center text-gray-500 dark:text-gray-400 mt-6">
+                <p class="font-retro text-sm">Use the Arrow Keys ($\leftarrow$, $\uparrow$, $\rightarrow$, $\downarrow$) to play.</p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-200 dark:bg-gray-800 py-4 mt-auto">
+        <div class="container mx-auto px-4 text-center text-gray-600 dark:text-gray-400">
+            <p class="text-xs">&copy; 2025 Snake Game. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script>
         // --- GAME CONSTANTS ---
@@ -94,8 +176,11 @@
         const ctx = canvas.getContext('2d');
         const scoreDisplay = document.getElementById('score');
         const statusDisplay = document.getElementById('gameStatus');
+        const themeToggle = document.getElementById('themeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
         
-        // Ensure canvas dimensions are set correctly based on the fixed size for game logic
+        // Logical canvas dimensions
         const LOGICAL_WIDTH = 400;
         const LOGICAL_HEIGHT = 400;
         canvas.width = LOGICAL_WIDTH;
@@ -104,18 +189,57 @@
         const TILE_SIZE = 20;
         const GRID_WIDTH = LOGICAL_WIDTH / TILE_SIZE;
         const GRID_HEIGHT = LOGICAL_HEIGHT / TILE_SIZE;
-        const INITIAL_SPEED = 150; // milliseconds per frame (slower = faster game)
+        const INITIAL_SPEED = 150; 
+        const SWIPE_THRESHOLD = 20; 
+
         
         // --- GAME STATE ---
         let snake = [];
         let food = {};
-        let dx = TILE_SIZE; // Velocity X (initial direction: right)
-        let dy = 0;        // Velocity Y
+        let dx = TILE_SIZE; 
+        let dy = 0;        
         let score = 0;
         let gameLoopInterval;
         let isRunning = false;
-        let changingDirection = false; // Flag to prevent rapid direction changes
+        let changingDirection = false; 
         
+        let touchStartX = 0;
+        let touchStartY = 0;
+        
+        // --- THEME LOGIC ---
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            applyTheme(!isDark);
+        }
+
+        // Initialize theme based on local storage or system preference
+        (function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (savedTheme === null && prefersDark)) {
+                applyTheme(true);
+            } else {
+                applyTheme(false);
+            }
+
+            themeToggle.addEventListener('click', toggleTheme);
+        })();
+
         // --- INITIALIZATION ---
         function initGame() {
             snake = [
@@ -129,23 +253,28 @@
             statusDisplay.textContent = 'Ready';
             changingDirection = false;
             generateFood();
-            draw();
+            
+            draw(); 
+            
+            // Reset button styles
             document.getElementById('startBtn').textContent = 'Start';
-            document.getElementById('startBtn').classList.remove('bg-red-600', 'hover:bg-red-500');
+            document.getElementById('startBtn').classList.remove('bg-gray-500', 'hover:bg-gray-400', 'bg-red-600', 'hover:bg-red-500');
             document.getElementById('startBtn').classList.add('bg-green-600', 'hover:bg-green-500');
             statusDisplay.classList.remove('text-red-500');
-            statusDisplay.classList.add('text-yellow-400');
+            // Reapply yellow-600 (light) or yellow-400 (dark)
+            statusDisplay.classList.add('text-yellow-600', 'dark:text-yellow-400'); 
         }
 
         // --- DRAWING FUNCTIONS ---
         function clearCanvas() {
-            ctx.fillStyle = '#e2e8f0';
+            ctx.fillStyle = '#f7fafc'; // Canvas background remains white/light gray
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
         function drawSnakeSegment(segment, color) {
             ctx.fillStyle = color;
-            ctx.strokeStyle = '#1a202c'; // Darker border for segments
+            ctx.strokeStyle = '#1a202c'; 
+            ctx.lineWidth = 1;
             ctx.fillRect(segment.x, segment.y, TILE_SIZE, TILE_SIZE);
             ctx.strokeRect(segment.x, segment.y, TILE_SIZE, TILE_SIZE);
         }
@@ -153,7 +282,7 @@
         function drawSnake() {
             // Head is bright green, body is dark green
             snake.forEach((segment, index) => {
-                const color = (index === 0) ? '#10b981' : '#059669'; // Emerald green tones
+                const color = (index === 0) ? '#34d399' : '#059669'; // Emerald green tones
                 drawSnakeSegment(segment, color);
             });
         }
@@ -161,8 +290,13 @@
         function drawFood() {
             ctx.fillStyle = '#ef4444'; // Red food
             ctx.strokeStyle = '#991b1b'; 
+            ctx.lineWidth = 1;
             ctx.fillRect(food.x, food.y, TILE_SIZE, TILE_SIZE);
             ctx.strokeRect(food.x, food.y, TILE_SIZE, TILE_SIZE);
+            
+            // Add a small white highlight for aesthetic
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.fillRect(food.x + 2, food.y + 2, TILE_SIZE / 3, TILE_SIZE / 3);
         }
 
         function draw() {
@@ -171,26 +305,25 @@
             drawSnake();
             
             if (!isRunning && score > 0) {
-                // Display 'Game Over' or 'Ready' text in the center
-                ctx.fillStyle = 'rgba(26, 32, 44, 0.8)';
+                // Display 'Game Over' text in the center
+                ctx.fillStyle = 'rgba(26, 32, 44, 0.85)'; // Dark overlay for game over screen
                 ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
                 
                 ctx.font = '30px "Press Start 2P"';
                 ctx.textAlign = 'center';
-                ctx.fillStyle = '#fff';
+                ctx.fillStyle = '#fcd34d'; // Yellow text
                 ctx.fillText('GAME OVER', LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2 - 20);
                 
                 ctx.font = '16px "Press Start 2P"';
+                ctx.fillStyle = '#fff';
                 ctx.fillText(`Score: ${score}`, LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2 + 20);
             }
         }
 
-        // --- GAME LOGIC ---
-
+        // --- GAME LOGIC (Unchanged) ---
         function generateFood() {
             let newFood;
             do {
-                // Generate random coordinates snapped to the grid
                 newFood = {
                     x: Math.floor(Math.random() * GRID_WIDTH) * TILE_SIZE,
                     y: Math.floor(Math.random() * GRID_HEIGHT) * TILE_SIZE,
@@ -205,24 +338,21 @@
         }
 
         function moveSnake() {
-            // Create the new head based on current direction
             const newHead = { 
                 x: snake[0].x + dx, 
                 y: snake[0].y + dy 
             };
 
-            // Add the new head to the beginning of the snake array
             snake.unshift(newHead);
             
-            // Check for collision or eating food
             const didEatFood = snake[0].x === food.x && snake[0].y === food.y;
 
             if (didEatFood) {
                 score++;
                 scoreDisplay.textContent = score;
-                generateFood(); // Grow the snake by not removing the tail
+                generateFood(); 
             } else {
-                snake.pop(); // Remove the tail if no food was eaten
+                snake.pop(); 
             }
 
             changingDirection = false;
@@ -242,7 +372,6 @@
             }
 
             // 2. Self Collision
-            // Check if the head's coordinates match any body segment's coordinates
             for (let i = 1; i < snake.length; i++) {
                 if (head.x === snake[i].x && head.y === snake[i].y) {
                     return true;
@@ -256,13 +385,14 @@
             isRunning = false;
             clearInterval(gameLoopInterval);
             statusDisplay.textContent = 'Game Over!';
-            statusDisplay.classList.remove('text-yellow-400');
+            statusDisplay.classList.remove('text-yellow-600', 'dark:text-yellow-400');
             statusDisplay.classList.add('text-red-500');
             
             document.getElementById('startBtn').textContent = 'Restart';
-            document.getElementById('startBtn').classList.remove('bg-green-600', 'hover:bg-green-500', 'bg-red-600');
+            document.getElementById('startBtn').classList.remove('bg-green-600', 'hover:bg-green-500', 'bg-gray-500', 'hover:bg-gray-400');
             document.getElementById('startBtn').classList.add('bg-red-600', 'hover:bg-red-500');
-            draw(); // Redraw once more to show game over screen overlay
+            
+            draw(); 
         }
 
         function gameLoop() {
@@ -275,13 +405,9 @@
             draw();
         }
 
-        // --- CONTROLS AND EVENT LISTENERS ---
+        // --- CONTROLS AND EVENT LISTENERS (Unchanged) ---
 
-        function changeDirection(event) {
-            // Determine if the input came from a keypress or a button click
-            const inputSource = event.key || event.target.id;
-
-            // Only process direction change if the game is running and we haven't already processed one this frame
+        function changeDirection(inputSource) {
             if (changingDirection || !isRunning) return;
             changingDirection = true;
             
@@ -290,64 +416,95 @@
             const goingRight = dx === TILE_SIZE;
             const goingLeft = dx === -TILE_SIZE;
             
-            // Log for debugging touch controls
-            // console.log("Direction change attempt:", inputSource);
-
-            if ((inputSource === 'ArrowLeft' || inputSource === 'leftBtn') && !goingRight) {
-                dx = -TILE_SIZE;
-                dy = 0;
-            } else if ((inputSource === 'ArrowUp' || inputSource === 'upBtn') && !goingDown) {
-                dx = 0;
-                dy = -TILE_SIZE;
-            } else if ((inputSource === 'ArrowRight' || inputSource === 'rightBtn') && !goingLeft) {
-                dx = TILE_SIZE;
-                dy = 0;
-            } else if ((inputSource === 'ArrowDown' || inputSource === 'downBtn') && !goingUp) {
-                dx = 0;
-                dy = TILE_SIZE;
+            switch (inputSource) {
+                case 'ArrowLeft':
+                case 'leftBtn':
+                    if (!goingRight) { dx = -TILE_SIZE; dy = 0; }
+                    break;
+                case 'ArrowUp':
+                case 'upBtn':
+                    if (!goingDown) { dx = 0; dy = -TILE_SIZE; }
+                    break;
+                case 'ArrowRight':
+                case 'rightBtn':
+                    if (!goingLeft) { dx = TILE_SIZE; dy = 0; }
+                    break;
+                case 'ArrowDown':
+                case 'downBtn':
+                    if (!goingUp) { dx = 0; dy = TIPE_SIZE; }
+                    break;
             }
         }
         
-        function startGame() {
+        function handleKeydown(event) { changeDirection(event.key); }
+        function handleButtonClick(event) { changeDirection(event.target.id); }
+
+        function startGameFunc() {
             if (isRunning) return;
             
-            initGame(); // Re-initialize game state if it was Game Over
+            initGame(); 
             isRunning = true;
             statusDisplay.textContent = 'Playing...';
+            statusDisplay.classList.add('text-yellow-600', 'dark:text-yellow-400');
             statusDisplay.classList.remove('text-red-500');
-            statusDisplay.classList.add('text-yellow-400');
             
-            // Start the game loop
-            gameLoopInterval = setInterval(gameLoop, INITIAL_SPEED);
             document.getElementById('startBtn').textContent = 'Playing';
             document.getElementById('startBtn').classList.add('bg-gray-500', 'hover:bg-gray-400');
             document.getElementById('startBtn').classList.remove('bg-green-600', 'hover:bg-green-500', 'bg-red-600', 'hover:bg-red-500');
+
+            gameLoopInterval = setInterval(gameLoop, INITIAL_SPEED);
+        }
+        
+        // --- TOUCH/SWIPE HANDLERS (Unchanged) ---
+        function handleTouchStart(event) {
+            if (!isRunning) return;
+            event.preventDefault(); 
+            const touch = event.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
         }
 
-        // Initialize event listeners
-        document.addEventListener('keydown', changeDirection);
-        document.getElementById('startBtn').addEventListener('click', startGame);
+        function handleTouchEnd(event) {
+            if (!isRunning || event.changedTouches.length === 0) return;
+            
+            const touch = event.changedTouches[0];
+            const diffX = touch.clientX - touchStartX;
+            const diffY = touch.clientY - touchStartY;
+            
+            if (Math.abs(diffX) < SWIPE_THRESHOLD && Math.abs(diffY) < SWIPE_THRESHOLD) {
+                return;
+            }
 
-        // Mobile button listeners (using 'click' which handles touch events)
-        document.getElementById('upBtn').addEventListener('click', changeDirection);
-        document.getElementById('downBtn').addEventListener('click', changeDirection);
-        document.getElementById('leftBtn').addEventListener('click', changeDirection);
-        document.getElementById('rightBtn').addEventListener('click', changeDirection);
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 0) {
+                    changeDirection('rightBtn');
+                } else {
+                    changeDirection('leftBtn');
+                }
+            } else {
+                if (diffY > 0) {
+                    changeDirection('downBtn');
+                } else {
+                    changeDirection('upBtn');
+                }
+            }
+        }
         
-        // --- STARTUP ---
-        initGame(); // Draw the initial state of the snake and food
+        // --- SETUP ---
+        document.addEventListener('keydown', handleKeydown);
+        document.getElementById('startBtn').addEventListener('click', startGameFunc);
+
+        document.getElementById('upBtn').addEventListener('click', handleButtonClick);
+        document.getElementById('downBtn').addEventListener('click', handleButtonClick);
+        document.getElementById('leftBtn').addEventListener('click', handleButtonClick);
+        document.getElementById('rightBtn').addEventListener('click', handleButtonClick);
+
+        canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+        canvas.addEventListener('touchend', handleTouchEnd, { passive: true });
+        
+        // Initial Draw
+        initGame(); 
          
-    </script>
-    <!-- Theme init: apply saved theme (no icons added) -->
-    <script>
-        (function(){
-            try {
-                const saved = localStorage.getItem('theme');
-                if (saved === 'dark') document.documentElement.classList.add('dark');
-                else if (saved === 'light') document.documentElement.classList.remove('dark');
-                else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
-            } catch (e) { /* ignore */ }
-        })();
     </script>
 </body>
 </html>

@@ -5,20 +5,133 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Canvas Art Generator - Smasduq</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        // --- Theme Application and Synchronous Init ---
+        
+        // This function will be defined globally and available after this script runs
+        window.updateThemeIcons = function(isDark) {
+            const icons = [
+                { type: 'sun', id: 'sun-icon-desktop' },
+                { type: 'moon', id: 'moon-icon-desktop' },
+                { type: 'sun', id: 'sun-icon-mobile' },
+                { type: 'moon', id: 'moon-icon-mobile' },
+                { type: 'sun', id: 'sun-icon-drawer' },
+                { type: 'moon', id: 'moon-icon-drawer' },
+            ];
+            icons.forEach(icon => {
+                const el = document.getElementById(icon.id);
+                if (!el) return;
+                const shouldShow = (isDark && icon.type === 'moon') || (!isDark && icon.type === 'sun');
+                el.style.display = shouldShow ? 'inline' : 'none';
+            });
+        };
+
+        window.applyTheme = function(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+            // Update icons immediately if called from an interaction (like a button click)
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                window.updateThemeIcons(isDark);
+            }
+        };
+
+        window.toggleTheme = function() {
+            const isDark = document.documentElement.classList.contains('dark');
+            window.applyTheme(!isDark);
+        };
+        
+        // IIFE runs synchronously to apply the class immediately, preventing FOUC.
+        (function initThemeSync() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            let isDark = false;
+            
+            if (savedTheme === 'dark') isDark = true;
+            else if (savedTheme === 'light') isDark = false;
+            else isDark = prefersDark;
+
+            // Apply theme class directly and synchronously
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+
+        // Once the DOM is loaded, run the icon update logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const isDark = document.documentElement.classList.contains('dark');
+            window.updateThemeIcons(isDark);
+        });
+    </script>
+    <style>
+        /* Light-mode fallbacks when html is not .dark (pragmatic) */
+        html:not(.dark) .bg-white { background-color: #ffffff !important; }
+        html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
+        html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
+        html:not(.dark) .bg-indigo-50 { background-color: #eef2ff !important; }
+        html:not(.dark) .bg-indigo-100 { background-color: #e0e7ff !important; }
+        html:not(.dark) .bg-green-50 { background-color: #f0fdf4 !important; }
+        html:not(.dark) .bg-green-100 { background-color: #dcfce7 !important; }
+        html:not(.dark) .bg-red-100 { background-color: #fee2e2 !important; }
+        html:not(.dark) .bg-yellow-100 { background-color: #fef3c7 !important; }
+        html:not(.dark) .bg-purple-100 { background-color: #f3e8ff !important; }
+
+        html:not(.dark) .text-gray-900 { color: #0f172a !important; }
+        html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
+        html:not(.dark) .text-gray-700 { color: #374151 !important; }
+        html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
+        html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
+        html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
+
+        /* Buttons/CTAs fallbacks */
+        html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
+        html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
+    </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col">
 
-    <header class="bg-gray-800 shadow-lg">
+    <header class="bg-gray-100 dark:bg-gray-800 shadow-lg">
         <nav class="container mx-auto px-6 py-4">
-            <a href="games.html" class="text-lg text-indigo-400 hover:underline">&larr; Back to Game Zone</a>
+            <!-- Back to Game Zone Icon Link: Now with Go-Back arrow for clarity -->
+            <a href="games.html" onclick="window.history.back()" title="Back to Game Zone" class="text-indigo-600 dark:text-indigo-400 p-2 rounded-full transition duration-300 
+                hover:text-indigo-500 dark:hover:text-indigo-300 
+                hover:bg-indigo-100/20 dark:hover:bg-indigo-900/40 
+                transform hover:scale-110 
+                inline-flex items-center shadow-lg hover:shadow-xl">
+                
+                <!-- Arrow Left SVG for clear back navigation -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1.5">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                
+                <!-- Gamepad Icon SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7">
+                    <rect x="2" y="4" width="20" height="16" rx="3" ry="3"></rect>
+                    <line x1="6" y1="10" x2="6" y2="14"></line>
+                    <line x1="8" y1="12" x2="4" y2="12"></line>
+                    <line x1="18" y1="10" x2="18" y2="14"></line>
+                    <line x1="20" y1="12" x2="16" y2="12"></line>
+                    <line x1="10" y1="16" x2="14" y2="16"></line>
+                    <line x1="12" y1="18" x2="12" y2="14"></line>
+                </svg>
+                <span class="sr-only">Back to Game Zone</span>
+            </a>
         </nav>
     </header>
 
     <main class="container mx-auto px-6 py-10 flex-grow text-center">
-        <h1 class="text-4xl font-bold text-white mb-4">Canvas Art Generator (Particles)</h1>
-        <p class="text-lg text-gray-400 mb-6">Click anywhere on the canvas to spawn colorful, bouncing particles. Right-click or press 'C' to clear.</p>
+        <h1 class="text-4xl font-bold text-white dark:text-gray-900 mb-4">Canvas Art Generator (Particles)</h1>
+        <p class="text-lg text-gray-400 dark:text-gray-600 mb-6">Click anywhere on the canvas to spawn colorful, bouncing particles. Right-click or press 'C' to clear.</p>
 
-        <div class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden relative">
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden relative">
             <canvas id="artCanvas" class="w-full h-[500px] block" style="cursor: crosshair;"></canvas>
             
             <div class="p-4 flex justify-center space-x-4">
@@ -28,6 +141,19 @@
             </div>
         </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 dark:bg-gray-950 py-10 transition-colors duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400 dark:text-gray-500">
+            <p class="mb-4 text-sm sm:text-lg">&copy; 2025 Smasduq. All rights reserved.</p>
+            <div class="mt-4 space-x-4 sm:space-x-6 text-lg sm:text-xl">
+                <!-- Replace # with actual links -->
+                <a href="https://www.linkedin.com/in/smasduq" target="_blank" class="hover:text-indigo-400 transition duration-300">LinkedIn</a>
+                <a href="https://github.com/Smasduq" target="_blank" class="hover:text-indigo-400 transition duration-300">GitHub</a>
+            
+            </div>
+        </div>
+    </footer>
 
     <script>
         const canvas = document.getElementById('artCanvas');
@@ -151,16 +277,26 @@
         // Initial launch
         animate();
     </script>
-    <!-- Theme init: apply saved theme (no icons added) -->
+    
     <script>
-        (function(){
-            try {
-                const saved = localStorage.getItem('theme');
-                if (saved === 'dark') document.documentElement.classList.add('dark');
-                else if (saved === 'light') document.documentElement.classList.remove('dark');
-                else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
-            } catch (e) { /* ignore */ }
-        })();
+        // Debug helper (kept for development utility)
+        function debugThemeState(label) {
+            const selectors = ['html', 'body', 'header', 'main', 'footer', '.bg-white'];
+            console.groupCollapsed('games.html theme debug:', label || 'state');
+            console.log('localStorage.theme =', localStorage.getItem('theme'));
+            console.log('document.documentElement.className =', document.documentElement.className);
+            selectors.forEach(sel => {
+                const el = document.querySelector(sel);
+                if (!el) return;
+                const cs = getComputedStyle(el);
+                console.log(sel, {
+                    color: cs.color,
+                    backgroundColor: cs.backgroundColor,
+                    className: el.className
+                });
+            });
+            console.groupEnd();
+        }
     </script>
 </body>
 </html>

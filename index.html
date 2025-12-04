@@ -19,6 +19,72 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        // --- Theme Application and Synchronous Init ---
+        
+        // This function will be defined globally and available after this script runs
+        window.updateThemeIcons = function(isDark) {
+            const icons = [
+                { type: 'sun', id: 'sun-icon-desktop' },
+                { type: 'moon', id: 'moon-icon-desktop' },
+                { type: 'sun', id: 'sun-icon-mobile' },
+                { type: 'moon', id: 'moon-icon-mobile' },
+                { type: 'sun', id: 'sun-icon-drawer' },
+                { type: 'moon', id: 'moon-icon-drawer' },
+            ];
+            icons.forEach(icon => {
+                const el = document.getElementById(icon.id);
+                if (!el) return;
+                const shouldShow = (isDark && icon.type === 'moon') || (!isDark && icon.type === 'sun');
+                el.style.display = shouldShow ? 'inline' : 'none';
+            });
+        };
+
+        window.applyTheme = function(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+            // Update icons immediately if called from an interaction (like a button click)
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                window.updateThemeIcons(isDark);
+            }
+        };
+
+        window.toggleTheme = function() {
+            const isDark = document.documentElement.classList.contains('dark');
+            window.applyTheme(!isDark);
+        };
+        
+        // IIFE runs synchronously to apply the class immediately, preventing FOUC.
+        (function initThemeSync() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            let isDark = false;
+            
+            if (savedTheme === 'dark') isDark = true;
+            else if (savedTheme === 'light') isDark = false;
+            else isDark = prefersDark;
+
+            // Apply theme class directly and synchronously
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+
+        // Once the DOM is loaded, run the icon update logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const isDark = document.documentElement.classList.contains('dark');
+            window.updateThemeIcons(isDark);
+        });
+    </script>
+
     <style>
         /* Custom Font Setup */
         body { font-family: 'Inter', sans-serif; }
@@ -42,10 +108,7 @@
             transition: transform 0.3s ease-out;
         }
 
-        /* Theme icon defaults: show sun in light mode, moon in dark mode.
-           This prevents a flash of the wrong icon before JS initializes.
-           We target the icon IDs directly so this works regardless of
-           Tailwind's utility classes. */
+        /* Icon visibility based on system preference (initial state) */
         #sun-icon-desktop, #sun-icon-mobile, #sun-icon-drawer { display: inline; }
         #moon-icon-desktop, #moon-icon-mobile, #moon-icon-drawer { display: none; }
 
@@ -54,38 +117,30 @@
             #moon-icon-desktop, #moon-icon-mobile, #moon-icon-drawer { display: inline; }
         }
 
-        /* If the html element has the `dark` class (Tailwind class strategy),
-           ensure the moon icons are visible and sun icons hidden. */
+        /* Icon visibility when dark mode is explicitly set */
         html.dark #sun-icon-desktop, html.dark #sun-icon-mobile, html.dark #sun-icon-drawer { display: none; }
         html.dark #moon-icon-desktop, html.dark #moon-icon-mobile, html.dark #moon-icon-drawer { display: inline; }
 
-          /* Fallback overrides for light mode
-              If Tailwind's CDN has generated `dark:` styles via media queries
-              (prefers-color-scheme), toggling the `html.dark` class won't
-              affect those rules. These overrides force light-mode colors
-              when html does NOT have the `dark` class. They use
-              high-specificity selectors and !important as a pragmatic
-              temporary fix until Tailwind is confirmed to be using
-              class-based dark mode. */
-          html:not(.dark) .bg-white { background-color: #ffffff !important; }
-          html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
-          html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
-          html:not(.dark) .bg-gray-200 { background-color: #e5e7eb !important; }
-          html:not(.dark) .bg-gray-800 { background-color: transparent !important; }
-          html:not(.dark) .bg-gray-900 { background-color: transparent !important; }
+        /* Fallback colors for elements that don't switch properly */
+        html:not(.dark) .bg-white { background-color: #ffffff !important; }
+        html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
+        html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
+        html:not(.dark) .bg-gray-200 { background-color: #e5e7eb !important; }
+        html:not(.dark) .bg-gray-800 { background-color: transparent !important; }
+        html:not(.dark) .bg-gray-900 { background-color: transparent !important; }
 
-          html:not(.dark) .text-gray-900 { color: #0f172a !important; }
-          html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
-          html:not(.dark) .text-gray-700 { color: #374151 !important; }
-          html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
-          html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
-          html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
-          html:not(.dark) .text-gray-300 { color: #d1d5db !important; }
-          html:not(.dark) .text-gray-100 { color: #f3f4f6 !important; }
+        html:not(.dark) .text-gray-900 { color: #0f172a !important; }
+        html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
+        html:not(.dark) .text-gray-700 { color: #374151 !important; }
+        html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
+        html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
+        html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
+        html:not(.dark) .text-gray-300 { color: #d1d5db !important; }
+        html:not(.dark) .text-gray-100 { color: #f3f4f6 !important; }
 
-          /* Buttons/CTAs fallbacks */
-          html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
-          html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
+        /* Buttons/CTAs fallbacks */
+        html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
+        html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
@@ -307,9 +362,9 @@
         <!-- Music Production Section (UPDATED: Simple description and link) -->
         <section id="music-showcase" class="py-16 md:py-24 bg-white dark:bg-gray-900 border-t-8 border-indigo-600/10 dark:border-indigo-500/10 transition-colors duration-300">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
-                <h2 class="text-4xl sm:text-5xl font-extrabold text-center mb-4 text-gray-900 dark:text-gray-100">Music Production 🎧</h2>
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-center mb-4 text-gray-900 dark:text-gray-100">Music Production</h2>
                 
-                <div class="bg-indigo-50 dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg border-l-4 border-indigo-500 dark:border-indigo-600 max-w-2xl mx-auto transition-colors duration-300">
+                <div class="bg-gray-100 dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg border-l-4 border-indigo-500 dark:border-indigo-600 max-w-2xl mx-auto transition-colors duration-300">
                     <p class="text-lg sm:text-xl text-gray-700 dark:text-gray-300 mb-8 font-medium">
                         Beyond coding, I explore the creative architecture of electronic music, specializing in synthwave, deep house, and ambient soundscapes. You can find my full discography, track samples, and production notes on my dedicated music page.
                     </p>
@@ -329,7 +384,7 @@
                 
                 <div class="bg-gray-50 dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-inner border border-gray-200 dark:border-gray-700 transition-colors duration-300">
                     <p class="text-lg sm:text-xl leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
-                        I'm Smasduq, a passionate technologist with five years of professional experience across web development and system architecture. My journey started with a fascination for crafting simple, elegant solutions to complex problems. I believe the best code is clean, well-documented, and focused on the end-user.
+                        I'm Smasduq, a passionate technologist with three years of professional experience across web development and system architecture. My journey started with a fascination for crafting simple, elegant solutions to complex problems. I believe the best code is clean, well-documented, and focused on the end-user.
                     </p>
                     <p class="text-lg sm:text-xl leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
                         When I'm not coding, you can find me exploring new open-source projects or contributing to developer communities. I'm always looking for challenging projects that push the boundaries of modern technology. Let's build something amazing together!
@@ -377,7 +432,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 dark:bg-gray-950 py-10 transition-colors duration-300">
+    <footer class="bg-gray-100 dark:bg-gray-950 py-10 transition-colors duration-300">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400 dark:text-gray-500">
             <p class="mb-4 text-sm sm:text-lg">&copy; 2025 Smasduq. All rights reserved.</p>
             <div class="mt-4 space-x-4 sm:space-x-6 text-lg sm:text-xl">
@@ -390,100 +445,34 @@
     </footer>
     
     <script>
-        // --- Dark/Light Mode Logic ---
-
-        // Helper function to update the icon visibility based on the current theme
-        function updateThemeIcons(isDark) {
-            const icons = [
-                { type: 'sun', id: 'sun-icon-desktop' },
-                { type: 'moon', id: 'moon-icon-desktop' },
-                { type: 'sun', id: 'sun-icon-mobile' },
-                { type: 'moon', id: 'moon-icon-mobile' },
-                { type: 'sun', id: 'sun-icon-drawer' },
-                { type: 'moon', id: 'moon-icon-drawer' },
-            ];
-
-            // Use inline style display to explicitly show/hide icons. This
-            // avoids conflicts with utility classes and CSS rules and gives
-            // a deterministic result immediately when toggling.
-            icons.forEach(icon => {
-                const element = document.getElementById(icon.id);
-                if (!element) return;
-                const shouldShow = (isDark && icon.type === 'moon') || (!isDark && icon.type === 'sun');
-                element.style.display = shouldShow ? 'inline' : 'none';
-            });
-        }
-
-        // Apply the theme class to the HTML element and update icons
-        function applyTheme(isDark) {
-            if (isDark) {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            }
-            updateThemeIcons(isDark);
-            // Debug: log computed styles after applying theme to help trace
-            // elements that don't switch.
-            try { debugThemeState('after applyTheme'); } catch (e) { /* ignore */ }
-        }
-
-        // Toggles the theme
-        function toggleTheme() {
-            const isDark = document.documentElement.classList.contains('dark');
-            applyTheme(!isDark);
-        }
-
-        // Initialize the theme on page load
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
-            let isDark = false;
-            if (savedTheme === 'dark') {
-                isDark = true;
-            } else if (savedTheme === 'light') {
-                isDark = false;
-            } else {
-                // If no saved theme, use system preference
-                isDark = prefersDark;
-            }
-            
-            applyTheme(isDark);
-        }
-
-        // --- Mobile Menu Logic ---
+        // Mobile menu toggle (drawer)
         function toggleMenu(show) {
             const drawer = document.getElementById('mobile-menu-drawer');
-            
+            if (!drawer) return;
             if (show) {
                 drawer.classList.remove('translate-x-full');
                 drawer.setAttribute('aria-hidden', 'false');
-                document.body.style.overflow = 'hidden'; 
+                document.body.style.overflow = 'hidden';
             } else {
                 drawer.classList.add('translate-x-full');
                 drawer.setAttribute('aria-hidden', 'true');
-                document.body.style.overflow = 'auto'; 
+                document.body.style.overflow = 'auto';
             }
         }
 
-        // Ensure menu closes when clicking a link inside the drawer
-        document.querySelectorAll('#mobile-menu-drawer a').forEach(link => {
-            link.addEventListener('click', () => {
-                toggleMenu(false);
+        // Close drawer when a link inside it is clicked
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('#mobile-menu-drawer a').forEach(link => {
+                link.addEventListener('click', () => toggleMenu(false));
             });
         });
+    </script>
 
-        // Initialize theme when the document is ready
-        document.addEventListener('DOMContentLoaded', initTheme);
-
-        // --- Debug helpers -------------------------------------------------
-        // Call `debugThemeState()` in the console or watch the logs when
-        // toggling theme to see which elements keep dark colors.
+    <script>
+        // Debug helper (kept for development utility)
         function debugThemeState(label) {
-            const selectors = ['html', 'body', 'header', '#hero', '#work', '#games-showcase', '#music-showcase', '#about', '#contact', 'footer'];
-            console.groupCollapsed('Theme debug:', label || 'state');
+            const selectors = ['html', 'body', 'header', 'main', 'footer', '.bg-white'];
+            console.groupCollapsed('games.html theme debug:', label || 'state');
             console.log('localStorage.theme =', localStorage.getItem('theme'));
             console.log('document.documentElement.className =', document.documentElement.className);
             selectors.forEach(sel => {
@@ -498,7 +487,7 @@
             });
             console.groupEnd();
         }
-
     </script>
+    
 </body>
 </html>
