@@ -3,115 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hangman - The Challenge</title>
+    <title>Smasduq - The Hangman Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
-
+        :root {
+            --primary-color: #6366f1; /* Indigo-500 */
+            --primary-dark: #4f46e5; /* Indigo-600 */
+        }
         body {
-            font-family: 'Roboto Mono', monospace;
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .mono-font {
+            font-family: 'Space Mono', monospace;
         }
         .hangman-container {
-            /* Custom styling for the canvas background */
-            background-color: #0f172a; 
-            border-radius: 8px;
+            background-color: #0f172a; /* Slate-900 */
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        #hangmanCanvas {
-            margin: 0 auto;
-            display: block;
+        #word-display {
+            letter-spacing: 0.75rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .letter-btn {
+            transition: all 0.1s ease-in-out;
+            transform: scale(1);
+            box-shadow: 0 4px var(--primary-dark);
+            border-bottom: 2px solid var(--primary-dark);
+        }
+        .letter-btn:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px var(--primary-dark);
+        }
+        .letter-btn:active:not(:disabled) {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 2px var(--primary-dark);
         }
         .letter-btn:disabled {
             cursor: not-allowed;
-            opacity: 0.8;
+            opacity: 0.7;
+            transform: none;
+            box-shadow: none;
+            border-bottom: none;
         }
-
-        /* Light-mode fallbacks when html is not .dark (pragmatic) */
-        html:not(.dark) .bg-white { background-color: #ffffff !important; }
-        html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
-        html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
-        html:not(.dark) .bg-indigo-50 { background-color: #eef2ff !important; }
-        html:not(.dark) .bg-indigo-100 { background-color: #e0e7ff !important; }
-        html:not(.dark) .bg-green-50 { background-color: #f0fdf4 !important; }
-        html:not(.dark) .bg-green-100 { background-color: #dcfce7 !important; }
-        html:not(.dark) .bg-red-100 { background-color: #fee2e2 !important; }
-        html:not(.dark) .bg-yellow-100 { background-color: #fef3c7 !important; }
-        html:not(.dark) .bg-purple-100 { background-color: #f3e8ff !important; }
-
-        html:not(.dark) .text-gray-900 { color: #0f172a !important; }
-        html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
-        html:not(.dark) .text-gray-700 { color: #374151 !important; }
-        html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
-        html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
-        html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
-
-        /* Buttons/CTAs fallbacks */
-        html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
-        html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
+        .win-btn {
+            background-color: #10b981 !important; /* Emerald-500 */
+            box-shadow: 0 4px #059669 !important; /* Emerald-600 */
+        }
+        .lose-btn {
+            background-color: #ef4444 !important; /* Red-500 */
+            box-shadow: 0 4px #dc2626 !important; /* Red-600 */
+        }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
 
-    <header class="bg-white dark:bg-gray-900 shadow-md">
+    <!-- Header (Navigation/Back Button) -->
+    <header class="bg-white dark:bg-gray-800 shadow-xl border-b border-gray-100 dark:border-gray-800">
         <nav class="container mx-auto px-6 py-4">
-            <!-- Placeholder link -->
-            <a href="games.html" class="text-lg text-indigo-600 hover:underline">&larr; Back to Game Zone</a>
+            <!-- Back to Game Zone Icon Link (Reusing the structure from the previous example) -->
+            <a href="#" onclick="window.history.back()" title="Back to Game Zone" class="text-indigo-600 dark:text-indigo-400 p-2 rounded-full transition duration-300 
+                hover:text-indigo-500 dark:hover:text-indigo-300 
+                hover:bg-indigo-100/20 dark:hover:bg-indigo-900/40 
+                transform hover:scale-110 
+                inline-flex items-center shadow-lg hover:shadow-xl">
+                
+                <!-- Arrow Left SVG for clear back navigation -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1.5">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                
+                <!-- Gamepad Icon SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7">
+                    <rect x="2" y="4" width="20" height="16" rx="3" ry="3"></rect>
+                    <line x1="6" y1="10" x2="6" y2="14"></line>
+                    <line x1="8" y1="12" x2="4" y2="12"></line>
+                    <line x1="18" y1="10" x2="18" y2="14"></line>
+                    <line x1="20" y1="12" x2="16" y2="12"></line>
+                    <line x1="10" y1="16" x2="14" y2="16"></line>
+                    <line x1="12" y1="18" x2="12" y2="14"></line>
+                </svg>
+                <span class="sr-only">Back to Game Zone</span>
+            </a>
         </nav>
     </header>
 
-    <main class="container mx-auto px-6 py-10 flex-grow">
-        <div class="max-w-2xl mx-auto text-center">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">The Hangman Challenge 🧠</h1>
-            <p class="text-lg text-gray-600 mb-8">Guess the word from the given category before you run out of incorrect guesses (6 strikes).</p>
+    <main class="w-full max-w-4xl mx-auto py-10">
+        <div class="max-w-xl mx-auto text-center">
+            <h1 class="text-5xl font-extrabold text-gray-900 dark:text-white mb-3">HANGMAN</h1>
+            <p class="text-xl text-indigo-600 dark:text-indigo-400 font-semibold mb-8">The Hangman Challenge</p>
             
-            <div id="game-area" class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-2xl">
+            <div id="game-area" class="bg-white dark:bg-gray-800 p-6 sm:p-10 rounded-3xl shadow-2xl transition duration-300 border-t-4 border-indigo-500">
                 
+                <!-- Category Display -->
+                <p id="category-display" class="text-lg font-bold mb-4 text-indigo-700 dark:text-indigo-300 h-6">
+                    <!-- Category will be inserted here -->
+                </p>
+
                 <!-- Hangman Drawing Canvas -->
-                <div class="flex justify-center mb-8">
+                <div class="flex justify-center mb-6">
                     <div class="hangman-container p-4">
                         <canvas id="hangmanCanvas" width="200" height="250"></canvas>
                     </div>
                 </div>
 
-                <div class="mb-8 border-b pb-4">
-                    <p id="word-display" class="text-5xl tracking-widest font-mono text-gray-800 break-all" style="min-height: 50px;"></p>
+                <div class="mb-6 py-4 border-y-2 border-dashed border-gray-300 dark:border-gray-700">
+                    <p id="word-display" class="mono-font text-5xl sm:text-6xl font-bold text-gray-900 dark:text-gray-100 uppercase break-all" style="min-height: 50px;">
+                        <!-- Word placeholder/display -->
+                    </p>
                 </div>
 
-                <p id="message" class="text-xl font-semibold mb-6 text-indigo-600">Click START to begin!</p>
+                <div class="flex justify-between items-center mb-6 text-lg font-medium">
+                    <span class="text-gray-600 dark:text-gray-300">Strikes: <span id="strikes-left" class="text-red-500 font-extrabold">6</span> / 6</span>
+                    <span class="text-gray-600 dark:text-gray-300">Guessed: <span id="guessed-letters" class="text-blue-500 font-bold mono-font text-sm">--</span></span>
+                </div>
+
+                <p id="message" class="text-xl font-semibold mb-6 text-indigo-600 dark:text-indigo-400">Click START to begin!</p>
                 
-                <div class="flex justify-between items-center mb-8">
-                    <span class="text-lg font-medium">Strikes Left: <span id="strikes-left" class="text-red-600 font-bold">6</span></span>
-                    <span class="text-lg font-medium">Guessed: <span id="guessed-letters" class="text-blue-600 font-bold">--</span></span>
-                </div>
-
-                <div id="letter-buttons" class="grid grid-cols-7 gap-2">
+                <div id="letter-buttons" class="grid grid-cols-6 sm:grid-cols-7 gap-2 sm:gap-3">
                     <!-- Buttons will be rendered here -->
                 </div>
                 
-                <button id="start-button" class="mt-8 w-full bg-green-600 text-white p-3 rounded-lg text-xl font-bold hover:bg-green-700 transition duration-200">START GAME</button>
+                <button id="start-button" class="mt-8 w-full win-btn text-white p-3 rounded-xl text-xl font-extrabold transition duration-200">START GAME</button>
             </div>
         </div>
     </main>
 
     <script>
-        // --- MASSIVE DICTIONARY (JSON-like structure) ---
+        // --- Game Data ---
         const wordData = {
             "Programming": [
-                "PYTHON", "JAVASCRIPT", "TAILWIND", "REACT", "ALGORITHM", 
-                "VARIABLE", "FUNCTION", "PROMISE", "SYNTAX", "DATABASE", 
-                "COMPILER", "OBJECT", "BOOLEAN", "INTEGER", "LIBRARY", 
-                "FRAMEWORK", "RECURSION", "FIREBASE", "ASYNC", "LINUX"
+                "PYTHON", "JAVASCRIPT", "TAILWIND", "ALGORITHM", 
+                "VARIABLE", "FUNCTION", "PROMISE", "SYNTAX", 
+                "COMPILER", "OBJECT", "BOOLEAN", "FIREBASE", 
+                "RECURSION", "ASYNC", "ANGULAR", "REACT"
             ],
             "Technology": [
-                "UBUNTU", "DEPLOY", "FIREWALL", "NETWORK", "PROTOCOL",
-                "BANDWIDTH", "CLOUD", "SERVER", "CLIENT", "BACKEND",
-                "FRONTEND", "DEVOPS", "MICROSOFT", "GOOGLE", "HARDWARE",
-                "SOFTWARE", "ROUTER", "MODEM", "WIFI", "ETHERNET"
+                "NETWORK", "PROTOCOL", "BANDWIDTH", "CLOUD", 
+                "SERVER", "CLIENT", "FRONTEND", "HARDWARE",
+                "SOFTWARE", "ROUTER", "MODEM", "WIFI", "ETHERNET", 
+                "DEVOPS", "CYBER", "MACHINE"
             ],
             "Abstract Terms": [
-                "MYSTERY", "CALENDAR", "ADVENTURE", "QUARTZ", "BLIZZARD",
-                "WHISKEY", "GAZETTE", "JAZZ", "OXYGEN", "ABYSS", 
-                "BUFFALO", "CRYPT", "FLAPJACK", "GALVANIZED", "ZEPHYR",
-                "PHANTOM", "EXODUS", "QUIRKY", "VORTEX", "UNKNOWN"
+                "MYSTERY", "CALENDAR", "ADVENTURE", "QUARTZ", 
+                "BLIZZARD", "WHISKEY", "GAZETTE", "JAZZ", 
+                "OXYGEN", "ABYSS", "CRYPT", "GALVANIZED", 
+                "ZEPHYR", "PHANTOM", "EXODUS", "UNKNOWN"
             ]
         };
         const MAX_STRIKES = 6;
@@ -128,7 +168,7 @@
         let revealedWord = [];
         let strikes = 0;
         let guessedLetters = [];
-        let isGameOver = false;
+        let isGameOver = true;
         let currentCategory = '';
 
         // --- DOM Elements ---
@@ -138,6 +178,7 @@
         const letterButtonsContainer = document.getElementById('letter-buttons');
         const message = document.getElementById('message');
         const startButton = document.getElementById('start-button');
+        const categoryDisplay = document.getElementById('category-display');
         
         // Canvas Setup
         const hangmanCanvas = document.getElementById('hangmanCanvas');
@@ -151,14 +192,14 @@
          */
         function drawGallows() {
             ctx.clearRect(0, 0, hangmanCanvas.width, hangmanCanvas.height);
-            ctx.strokeStyle = '#f1f5f9'; // Light color for drawing
-            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#f1f5f9'; // Light color for drawing (off-white)
+            ctx.lineWidth = 4;
             
             const [w, h] = [hangmanCanvas.width, hangmanCanvas.height];
             const base = h - 20;
             const top = 30;
             const center = w / 2;
-            const rope = 50;
+            const ropeOffset = 50; // Horizontal offset from center for the main pole
             
             // Base
             ctx.beginPath();
@@ -168,21 +209,21 @@
 
             // Vertical pole
             ctx.beginPath();
-            ctx.moveTo(center - rope, base);
-            ctx.lineTo(center - rope, top);
+            ctx.moveTo(center - ropeOffset, base);
+            ctx.lineTo(center - ropeOffset, top);
             ctx.stroke();
             
             // Top beam
             ctx.beginPath();
-            ctx.moveTo(center - rope, top);
-            ctx.lineTo(center + 10, top);
+            ctx.moveTo(center - ropeOffset, top);
+            ctx.lineTo(center, top);
             ctx.stroke();
             
             // Rope
             ctx.beginPath();
             ctx.lineWidth = 3;
             ctx.moveTo(center, top);
-            ctx.lineTo(center, top + rope);
+            ctx.lineTo(center, top + 25);
             ctx.stroke();
         }
 
@@ -190,49 +231,48 @@
          * Draws the Hangman parts based on wrong guesses.
          */
         function drawHangmanPart(partIndex) {
-            ctx.strokeStyle = '#ef4444'; // Red color for the body
+            ctx.strokeStyle = '#ef4444'; // Red color for the body (Tailwind red-500)
             ctx.lineWidth = 4;
             
-            const [w, h] = [hangmanCanvas.width, hangmanCanvas.height];
-            const base = h - 20;
-            const top = 30;
-            const center = w / 2;
-            const rope = 50;
+            const center = hangmanCanvas.width / 2;
+            const ropeHeight = 25;
+            const headY = 30 + ropeHeight + 15;
+            const bodyY = headY + 15;
 
             switch(partIndex) {
                 case 1: // Head
                     ctx.beginPath();
-                    ctx.arc(center, top + rope + 15, 15, 0, Math.PI * 2, true);
+                    ctx.arc(center, headY, 15, 0, Math.PI * 2, true);
                     ctx.stroke();
                     break;
                 case 2: // Body
                     ctx.beginPath();
-                    ctx.moveTo(center, top + rope + 30);
-                    ctx.lineTo(center, base - 100);
+                    ctx.moveTo(center, headY + 15);
+                    ctx.lineTo(center, bodyY + 50);
                     ctx.stroke();
                     break;
                 case 3: // Left Arm
                     ctx.beginPath();
-                    ctx.moveTo(center, base - 130);
-                    ctx.lineTo(center - 20, base - 110);
+                    ctx.moveTo(center, bodyY + 10);
+                    ctx.lineTo(center - 20, bodyY + 30);
                     ctx.stroke();
                     break;
                 case 4: // Right Arm
                     ctx.beginPath();
-                    ctx.moveTo(center, base - 130);
-                    ctx.lineTo(center + 20, base - 110);
+                    ctx.moveTo(center, bodyY + 10);
+                    ctx.lineTo(center + 20, bodyY + 30);
                     ctx.stroke();
                     break;
                 case 5: // Left Leg
                     ctx.beginPath();
-                    ctx.moveTo(center, base - 100);
-                    ctx.lineTo(center - 20, base - 70);
+                    ctx.moveTo(center, bodyY + 50);
+                    ctx.lineTo(center - 20, bodyY + 80);
                     ctx.stroke();
                     break;
                 case 6: // Right Leg (Final piece)
                     ctx.beginPath();
-                    ctx.moveTo(center, base - 100);
-                    ctx.lineTo(center + 20, base - 70);
+                    ctx.moveTo(center, bodyY + 50);
+                    ctx.lineTo(center + 20, bodyY + 80);
                     ctx.stroke();
                     break;
             }
@@ -260,8 +300,13 @@
             drawGallows();
             strikesLeft.textContent = MAX_STRIKES;
             guessedLettersDisplay.textContent = '--';
-            message.textContent = `Category: ${currentCategory.toUpperCase()}. Guess a letter!`;
-            message.classList.remove('text-green-600', 'text-red-600');
+            categoryDisplay.textContent = `CATEGORY: ${currentCategory.toUpperCase()}`;
+            message.textContent = `Guess a letter!`;
+            
+            // Cleanup message styles
+            message.classList.remove('text-green-600', 'text-red-600', 'dark:text-indigo-400');
+            message.classList.add('text-indigo-600', 'dark:text-indigo-400');
+
             startButton.style.display = 'none';
 
             renderWord();
@@ -279,7 +324,8 @@
                 for (let char of ALPHABET) {
                     const button = document.createElement('button');
                     button.textContent = char;
-                    button.className = 'letter-btn bg-indigo-500 text-white p-2 rounded-md font-bold text-lg hover:bg-indigo-600 transition duration-100 shadow-md';
+                    // Dynamically setting classes for aesthetic buttons
+                    button.className = 'letter-btn bg-indigo-500 text-white p-2 rounded-lg font-bold text-lg uppercase shadow-md';
                     button.setAttribute('data-letter', char);
                     button.addEventListener('click', () => handleGuess(char));
                     letterButtonsContainer.appendChild(button);
@@ -290,8 +336,8 @@
             if (reset) {
                 letterButtonsContainer.querySelectorAll('.letter-btn').forEach(btn => {
                     btn.disabled = false;
-                    btn.classList.remove('bg-green-500', 'bg-red-500');
-                    btn.classList.add('bg-indigo-500', 'hover:bg-indigo-600');
+                    btn.classList.remove('bg-green-500', 'bg-red-500', 'win-btn', 'lose-btn');
+                    btn.classList.add('bg-indigo-500');
                 });
             }
         }
@@ -301,7 +347,14 @@
             if (button) {
                 button.disabled = true;
                 button.classList.remove('bg-indigo-500', 'hover:bg-indigo-600');
-                button.classList.add(correct ? 'bg-green-500' : 'bg-red-500');
+                if (correct) {
+                    button.classList.add('bg-green-500');
+                } else {
+                    button.classList.add('bg-red-500');
+                }
+                // Remove custom button shadows for disabled state
+                button.style.boxShadow = 'none';
+                button.style.transform = 'none';
             }
         }
 
@@ -309,13 +362,19 @@
         function handleGuess(letter) {
             if (isGameOver || guessedLetters.includes(letter)) return;
 
+            // Disable the button immediately
+            const btn = document.querySelector(`[data-letter="${letter}"]`);
+            if(btn) btn.disabled = true;
+
             guessedLetters.push(letter);
             guessedLettersDisplay.textContent = guessedLetters.join(', ');
 
             let correctGuess = false;
+            let indices = [];
             for (let i = 0; i < secretWord.length; i++) {
                 if (secretWord[i] === letter) {
                     revealedWord[i] = letter;
+                    indices.push(i);
                     correctGuess = true;
                 }
             }
@@ -340,39 +399,40 @@
         // --- End Game ---
         function endGame(won) {
             isGameOver = true;
+            // Disable all remaining buttons
             letterButtonsContainer.querySelectorAll('.letter-btn').forEach(btn => btn.disabled = true);
+            
             startButton.textContent = 'Play Again';
             startButton.style.display = 'block';
 
+            // Update Start button style
+            startButton.classList.remove('win-btn', 'lose-btn');
+            startButton.classList.add(won ? 'win-btn' : 'lose-btn');
+
+            // Update message and word display
+            message.classList.remove('text-indigo-600', 'dark:text-indigo-400');
             if (won) {
-                message.textContent = `VICTORY! The word was "${secretWord}" (Category: ${currentCategory.toUpperCase()})`;
+                message.textContent = `VICTORY! The word was: "${secretWord}"`;
                 message.classList.add('text-green-600');
             } else {
-                message.textContent = `Game Over! The word was "${secretWord}" (Category: ${currentCategory.toUpperCase()})`;
+                message.textContent = `Game Over! The word was: "${secretWord}"`;
                 message.classList.add('text-red-600');
                 wordDisplay.textContent = secretWord.split('').join(' '); // Show the word
             }
+            categoryDisplay.textContent = `Category: ${currentCategory.toUpperCase()}`;
         }
 
-        // --- Event Listeners and Initial Setup ---
-        startButton.addEventListener('click', initializeGame);
-        
-        // Initial setup before game starts
-        renderButtons();
-        letterButtonsContainer.querySelectorAll('.letter-btn').forEach(btn => btn.disabled = true);
-        wordDisplay.textContent = 'H A N G M A N';
-        drawGallows(); // Draw the empty gallows on load
-    </script>
-    <!-- Theme init: apply saved theme (no icons added) -->
-    <script>
-        (function(){
-            try {
-                const saved = localStorage.getItem('theme');
-                if (saved === 'dark') document.documentElement.classList.add('dark');
-                else if (saved === 'light') document.documentElement.classList.remove('dark');
-                else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
-            } catch (e) { /* ignore */ }
-        })();
+        // --- Initial Setup on Load ---
+        function initialSetup() {
+            renderButtons();
+            letterButtonsContainer.querySelectorAll('.letter-btn').forEach(btn => btn.disabled = true);
+            wordDisplay.textContent = Array(7).fill('_').join(' ');
+            categoryDisplay.textContent = ''; // Hide category initially
+            drawGallows(); // Draw the empty gallows on load
+            startButton.addEventListener('click', initializeGame);
+        }
+
+        initialSetup();
     </script>
 </body>
 </html>
