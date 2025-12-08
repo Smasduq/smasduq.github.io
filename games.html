@@ -117,6 +117,10 @@
         html:not(.dark) .bg-yellow-100 { background-color: #fef3c7 !important; }
         html:not(.dark) .bg-purple-100 { background-color: #f3e8ff !important; }
 
+        /* Added fallbacks for new colors (Teal and Amber) */
+        html:not(.dark) .bg-teal-100 { background-color: #ccfbf1 !important; }
+        html:not(.dark) .bg-amber-100 { background-color: #fef3c7 !important; }
+
         html:not(.dark) .text-gray-900 { color: #0f172a !important; }
         html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
         html:not(.dark) .text-gray-700 { color: #374151 !important; }
@@ -127,6 +131,13 @@
         /* Buttons/CTAs fallbacks */
         html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
         html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
+        
+        /* Added button fallbacks for new colors (Teal and Amber) */
+        html:not(.dark) .bg-teal-600 { background-color: #0d9488 !important; }
+        html:not(.dark) .hover\:bg-teal-700 { background-color: #0f766e !important; }
+        html:not(.dark) .bg-amber-600 { background-color: #d97706 !important; }
+        html:not(.dark) .hover\:bg-amber-700 { background-color: #b45309 !important; }
+
     </style>
 
     <script>
@@ -303,11 +314,20 @@
                 <a href="hangman.html" class="block w-full text-center bg-purple-600 dark:bg-purple-500 hover:bg-purple-700 dark:hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition duration-300">Play Game &rarr;</a>
             </div>
 
+            <!-- RECONFIGURED: Snake Game (Item 6) -->
             <div class="bg-white dark:bg-gray-800 dark:shadow-md p-8 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-[1.02]">
-                <h2 class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-4">6. Snake Game</h2>
-                <p class="text-gray-600 dark:text-gray-400 mb-6">Guess the secret programming-related word before you run out of incorrect strikes (6 max). Excellent for array and string handling.</p>
-                <span class="inline-block bg-purple-100 dark:bg-purple-900 text-gray-500 dark:text-purple-300 text-sm font-medium px-3 py-1 rounded-full mb-4">Skills: String Manipulation, State Management, DOM Events</span>
-                <a href="snake_game.html" class="block w-full text-center bg-purple-600 dark:bg-purple-500 hover:bg-purple-700 dark:hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition duration-300">Play Game &rarr;</a>
+                <h2 class="text-3xl font-bold text-teal-600 dark:text-teal-400 mb-4">6. Snake Game</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">The classic arcade game. Guide the growing snake to eat food, avoiding walls and its own tail. Requires precise timing and strategy.</p>
+                <span class="inline-block bg-teal-100 dark:bg-teal-900 text-gray-500 dark:text-teal-300 text-sm font-medium px-3 py-1 rounded-full mb-4">Skills: Canvas, Game Loop, Coordinate Systems, Queue Logic</span>
+                <a href="snake_game.html" class="block w-full text-center bg-teal-600 dark:bg-teal-500 hover:bg-teal-700 dark:hover:bg-teal-600 text-white font-semibold py-3 rounded-lg transition duration-300">Play Game &rarr;</a>
+            </div>
+
+            <!-- RECONFIGURED: Target Blitz (Item 7) -->
+            <div class="bg-white dark:bg-gray-800 dark:shadow-md p-8 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-[1.02]">
+                <h2 class="text-3xl font-bold text-amber-600 dark:text-amber-400 mb-4">7. Target Blitz</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">A fast-paced reaction test. Click the glowing targets as quickly as they appear to maximize your score and measure your accuracy.</p>
+                <span class="inline-block bg-amber-100 dark:bg-amber-900 text-gray-500 dark:text-amber-300 text-sm font-medium px-3 py-1 rounded-full mb-4">Skills: Timers, Reaction Measurement, DOM Manipulation, Event Speed</span>
+                <a href="target_blitz.html" class="block w-full text-center bg-amber-600 dark:bg-amber-500 hover:bg-amber-700 dark:hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition duration-300">Play Game &rarr;</a>
             </div>
 
         </div>
