@@ -5,6 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smasduq - The Hangman Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // --- Theme Application and Synchronous Init ---
+        
+        // This function will be defined globally and available after this script runs
+        window.updateThemeIcons = function(isDark) {
+            const icons = [
+                { type: 'sun', id: 'sun-icon-desktop' },
+                { type: 'moon', id: 'moon-icon-desktop' },
+                { type: 'sun', id: 'sun-icon-mobile' },
+                { type: 'moon', id: 'moon-icon-mobile' },
+                { type: 'sun', id: 'sun-icon-drawer' },
+                { type: 'moon', id: 'moon-icon-drawer' },
+            ];
+            icons.forEach(icon => {
+                const el = document.getElementById(icon.id);
+                if (!el) return;
+                const shouldShow = (isDark && icon.type === 'moon') || (!isDark && icon.type === 'sun');
+                el.style.display = shouldShow ? 'inline' : 'none';
+            });
+        };
+
+        window.applyTheme = function(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+            // Update icons immediately if called from an interaction (like a button click)
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                window.updateThemeIcons(isDark);
+            }
+        };
+
+        window.toggleTheme = function() {
+            const isDark = document.documentElement.classList.contains('dark');
+            window.applyTheme(!isDark);
+        };
+        
+        // IIFE runs synchronously to apply the class immediately, preventing FOUC.
+        (function initThemeSync() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            let isDark = false;
+            
+            if (savedTheme === 'dark') isDark = true;
+            else if (savedTheme === 'light') isDark = false;
+            else isDark = prefersDark;
+
+            // Apply theme class directly and synchronously
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+
+        // Once the DOM is loaded, run the icon update logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const isDark = document.documentElement.classList.contains('dark');
+            window.updateThemeIcons(isDark);
+        });
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -14,6 +78,12 @@
         body {
             font-family: 'Inter', sans-serif;
             transition: background-color 0.3s, color 0.3s;
+        }
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            margin: 0;
         }
         .mono-font {
             font-family: 'Space Mono', monospace;
@@ -56,9 +126,30 @@
             background-color: #ef4444 !important; /* Red-500 */
             box-shadow: 0 4px #dc2626 !important; /* Red-600 */
         }
+
+        /* Fallback colors for elements that don't switch properly */
+        html:not(.dark) .bg-white { background-color: #ffffff !important; }
+        html:not(.dark) .bg-gray-50 { background-color: #f9fafb !important; }
+        html:not(.dark) .bg-gray-100 { background-color: #f3f4f6 !important; }
+        html:not(.dark) .bg-gray-200 { background-color: #e5e7eb !important; }
+        html:not(.dark) .bg-gray-800 { background-color: transparent !important; }
+        html:not(.dark) .bg-gray-900 { background-color: transparent !important; }
+
+        html:not(.dark) .text-gray-900 { color: #0f172a !important; }
+        html:not(.dark) .text-gray-800 { color: #1f2937 !important; }
+        html:not(.dark) .text-gray-700 { color: #374151 !important; }
+        html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
+        html:not(.dark) .text-gray-500 { color: #6b7280 !important; }
+        html:not(.dark) .text-gray-400 { color: #9ca3af !important; }
+        html:not(.dark) .text-gray-300 { color: #d1d5db !important; }
+        html:not(.dark) .text-gray-100 { color: #f3f4f6 !important; }
+
+        /* Buttons/CTAs fallbacks */
+        html:not(.dark) .dark\:bg-indigo-500, html:not(.dark) .bg-indigo-600 { background-color: #4f46e5 !important; }
+        html:not(.dark) .dark\:bg-indigo-600, html:not(.dark) .bg-indigo-500 { background-color: #6366f1 !important; }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col  justify-center p-4">
 
     <!-- Header (Navigation/Back Button) -->
     <header class="bg-white dark:bg-gray-800 shadow-xl border-b border-gray-100 dark:border-gray-800">
