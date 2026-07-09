@@ -21,7 +21,7 @@ export const PROJECTS = [
     description: 'A robust terminal app for searching and downloading anime episodes with interactive prompts, progress tracking, and native packages for Linux distros.',
     shortDescription: 'Search and download anime episodes from the terminal with interactive prompts and Linux package support.',
     tags: ['Python', 'yt-dlp', 'CLI'],
-    href: 'https://smasduq.github.io/ani-pull',
+    href: 'https://ani-pull.smasduq.xyz',
     featured: false,
     gradient: 'linear-gradient(135deg, #042f2e 0%, #134e4a 50%, #115e59 100%)',
   },
