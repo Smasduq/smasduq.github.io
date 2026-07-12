@@ -20,7 +20,11 @@ export default function ProjectCard({
           className="project-image-full"
           style={{ background: project.gradient }}
         >
-          <span className="project-image-label">{project.imageLabel}</span>
+          {project.logo ? (
+            <img src={project.logo} alt={project.title} className="project-logo-img" />
+          ) : (
+            <span className="project-image-label">{project.imageLabel}</span>
+          )}
           <div className="project-image-overlay" />
         </div>
         <div className="project-info-full">
@@ -53,7 +57,11 @@ export default function ProjectCard({
         className="work-img"
         style={{ background: project.gradient }}
       >
-        <span className="project-image-label">{project.imageLabel}</span>
+        {project.logo ? (
+          <img src={project.logo} alt={project.title} className="project-logo-img" />
+        ) : (
+          <span className="project-image-label">{project.imageLabel}</span>
+        )}
         <div className="work-img-overlay" />
         {isFeatured && <span className="featured-badge">Featured</span>}
       </div>

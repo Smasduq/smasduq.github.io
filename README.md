@@ -22,6 +22,12 @@ A high-performance video platform built specifically for video editors to showca
 - **Tech Stack**: React, FastAPI, Rust, PostgreSQL.
 - **Key Features**: Rust-powered video transcoding, developer-friendly creator analytics, social interactions, and high-performance media delivery.
 
+### 🔗 [LinkBio](https://link.smasduq.xyz)
+A custom, clean, and highly optimized Link-in-Bio landing page to unify all social profiles, project links, and professional platforms under a single fast-loading URL.
+- **Role**: Creator and Lead Engineer.
+- **Tech Stack**: Next.js, React, CSS, Vercel.
+- **Key Features**: High responsiveness, customizable profile links, custom theme integrations, and analytics.
+
 ### 💻 [Ani-pull](https://ani-pull.smasduq.xyz)
 A robust terminal CLI utility for searching and downloading anime episodes.
 - **Role**: Creator and Maintainer.

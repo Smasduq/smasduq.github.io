@@ -898,6 +898,23 @@ textarea {
     color: rgba(255, 255, 255, 0.9);
 }
 
+.project-logo-img {
+    position: relative;
+    max-width: 60%;
+    max-height: 55%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    z-index: 2;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
+    transition: transform var(--transition);
+}
+
+.work-card:hover .project-logo-img,
+.project-card-full:hover .project-logo-img {
+    transform: scale(1.05);
+}
+
 .work-img-overlay,
 .project-image-overlay {
     position: absolute;
@@ -1115,6 +1132,13 @@ textarea {
     font-weight: 800;
     color: #fff;
     letter-spacing: -0.04em;
+}
+
+.leadership-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
 }
 
 .leadership-card-titles {

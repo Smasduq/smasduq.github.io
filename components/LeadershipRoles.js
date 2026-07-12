@@ -72,7 +72,11 @@ function LeadershipCard({ company, index }) {
           style={{ background: company.accent }}
           aria-hidden="true"
         >
-          <span>{company.logoInitial}</span>
+          {company.logoSrc ? (
+            <img src={company.logoSrc} alt={company.name} />
+          ) : (
+            <span>{company.logoInitial}</span>
+          )}
         </div>
         <div className="leadership-card-titles">
           <h3>{company.name}</h3>
