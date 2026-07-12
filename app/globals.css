@@ -662,6 +662,16 @@ textarea {
     animation: fadeInUp 0.8s ease 0.35s both, gradientShift 8s ease infinite;
 }
 
+.hero-title-name {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--secondary);
+    margin-bottom: var(--space-1);
+    animation: fadeInUp 0.8s ease 0.1s both;
+}
+
 @keyframes gradientShift {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }

@@ -5,7 +5,7 @@ import ProjectsGallery from '@/components/ProjectsGallery';
 import './projects.css';
 
 export const metadata = {
-  title: 'Projects | Smasduq Fullstack Engineer',
+  title: 'Projects | Sadiqu Muhammad Bello | Fullstack Engineer',
   description:
     'A curated gallery of fullstack projects by a 3-year experienced engineer, ranging from system architecture to frontend experiences.',
 };

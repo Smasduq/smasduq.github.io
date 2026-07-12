@@ -116,9 +116,9 @@ export default function Header({ variant = 'home' }) {
         <div className="container header-container">
           <nav className="site-nav" aria-label="Main navigation">
             {isHome ? (
-              <a href="#" className="logo" aria-label="Smasduq home">SMASDUQ</a>
+              <a href="#" className="logo" aria-label="Sadiqu Muhammad Bello home">SMASDUQ</a>
             ) : (
-              <Link href="/" className="logo" aria-label="Smasduq home">SMASDUQ</Link>
+              <Link href="/" className="logo" aria-label="Sadiqu Muhammad Bello home">SMASDUQ</Link>
             )}
 
             <div className="nav-links">

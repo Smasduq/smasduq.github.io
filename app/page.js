@@ -9,7 +9,7 @@ import LeadershipRoles from '@/components/LeadershipRoles';
 import { PROJECTS } from '@/data/projects';
 
 export const metadata = {
-  title: 'Smasduq | Fullstack Engineer',
+  title: 'Sadiqu Muhammad Bello | Fullstack Engineer',
   description:
     'Fullstack Engineer with 3 years of experience specializing in high-performance web applications, architectural design, and user-centric experiences.',
 };
@@ -51,7 +51,7 @@ export default function HomePage() {
                 <div className="about-img-frame">
                   <img
                     src="/img/smasduq.jpeg"
-                    alt="Smasduq — Fullstack Engineer"
+                    alt="Sadiqu Muhammad Bello — Fullstack Engineer"
                     className="about-img"
                     width={600}
                     height={600}
@@ -78,7 +78,7 @@ export default function HomePage() {
                 />
                 <div className="about-copy">
                   <p>
-                    I am a Fullstack Engineer with 3 years of professional experience building robust digital
+                    I am Sadiqu Muhammad Bello, a Fullstack Engineer with 3 years of professional experience building robust digital
                     products. I bridge the gap between complex engineering requirements and elegant user
                     experiences.
                   </p>

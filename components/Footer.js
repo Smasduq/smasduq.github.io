@@ -7,7 +7,7 @@ export default function Footer({ variant = 'home' }) {
       <footer className="site-footer site-footer--projects">
         <div className="container footer-container">
           <div className="footer-bottom">
-            <p className="copyright">&copy; 2026 Smasduq. Built for performance.</p>
+            <p className="copyright">&copy; 2026 Sadiqu Muhammad Bello. Built for performance.</p>
             <BackToTop />
           </div>
         </div>
@@ -38,7 +38,7 @@ export default function Footer({ variant = 'home' }) {
         </div>
 
         <div className="footer-bottom">
-          <p className="copyright">&copy; 2026 Smasduq. All rights reserved. Crafted with precision.</p>
+          <p className="copyright">&copy; 2026 Sadiqu Muhammad Bello. All rights reserved. Crafted with precision.</p>
           <BackToTop />
         </div>
       </div>

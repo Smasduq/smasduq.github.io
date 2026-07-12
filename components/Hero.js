@@ -49,6 +49,7 @@ export default function Hero() {
             3+ Years of Professional Experience
           </span>
           <h1>
+            <span className="hero-title-name">Sadiqu Muhammad Bello</span>
             <span className="hero-title-line">Fullstack Engineer</span>
             <span className="hero-title-line hero-title-accent">&amp; Solutions Architect</span>
           </h1>
