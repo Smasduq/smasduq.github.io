@@ -1,3 +1,5 @@
+/* ─── Projects Page — Sunrise Theme ─────────────────────────────────────────*/
+
 .projects-hero {
     position: relative;
     padding: calc(var(--header-height) + var(--space-6)) 0 var(--space-5);
@@ -5,20 +7,19 @@
     overflow: hidden;
 }
 
-.projects-hero .hero-grid {
-    opacity: 0.5;
-}
+.projects-hero .hero-grid { opacity: 0.45; }
 
+/* Warm amber glow fanning down from the top — like the horizon in the photo */
 .projects-hero-glow {
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 600px;
-    height: 300px;
-    background: radial-gradient(ellipse, var(--primary-glow) 0%, transparent 70%);
-    filter: blur(60px);
-    opacity: 0.4;
+    width: 640px;
+    height: 320px;
+    background: radial-gradient(ellipse, rgba(240, 168, 67, 0.22) 0%, rgba(126, 184, 212, 0.08) 55%, transparent 75%);
+    filter: blur(70px);
+    opacity: 0.55;
     pointer-events: none;
 }
 
@@ -33,19 +34,31 @@
     font-size: clamp(2.5rem, 5vw, 3.5rem);
     line-height: 1.1;
     margin-bottom: var(--space-2);
+    /* Sunrise sweep on the page title */
+    background: linear-gradient(110deg, var(--sky-glow) 0%, var(--primary) 30%, var(--accent) 60%, var(--secondary) 100%);
+    background-size: 220% 220%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: skyShift 10s ease infinite;
+}
+
+@keyframes skyShift {
+    0%, 100% { background-position: 0%   50%; }
+    50%       { background-position: 100% 50%; }
 }
 
 .projects-hero .text-muted {
     font-size: 1.05rem;
-    line-height: 1.7;
+    line-height: 1.75;
     max-width: 600px;
     margin: 0 auto;
 }
 
-.section--gallery {
-    padding-top: 0;
-}
+/* ─── Gallery section ────────────────────────────────────────────────────────*/
+.section--gallery { padding-top: 0; }
 
+/* ─── Filter bar ─────────────────────────────────────────────────────────────*/
 .filter-bar {
     display: flex;
     justify-content: center;
@@ -55,34 +68,42 @@
 }
 
 .filter-btn {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(240, 168, 67, 0.04);
     border: 1px solid var(--border);
     color: var(--text-muted);
-    padding: 10px 20px;
+    padding: 10px 22px;
     border-radius: var(--radius-full);
     cursor: pointer;
-    font-weight: 500;
-    font-size: 0.875rem;
-    transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    transition:
+        background     var(--transition-fast),
+        color          var(--transition-fast),
+        border-color   var(--transition-fast),
+        transform      var(--transition-fast),
+        box-shadow     var(--transition-fast);
 }
 
 .filter-btn:hover {
     color: var(--text);
-    border-color: var(--border-strong);
-    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(240, 168, 67, 0.28);
+    background: rgba(240, 168, 67, 0.09);
 }
 
+/* Active state — amber sunrise button */
 .filter-btn.active {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-    color: #fff;
+    color: #0b0f1a;
     border-color: transparent;
-    box-shadow: 0 4px 16px var(--primary-glow);
+    box-shadow: 0 4px 18px rgba(240, 168, 67, 0.35);
+    font-weight: 700;
 }
 
-.filter-btn.active:hover {
-    transform: translateY(-1px);
-}
+.filter-btn.active:hover { transform: translateY(-1px); }
 
+/* ─── Project grid ───────────────────────────────────────────────────────────*/
 .project-grid-detailed {
     display: grid;
     grid-template-columns: 1fr;
@@ -97,39 +118,38 @@
 }
 
 @media (min-width: 1024px) {
-    .project-grid-detailed {
-        gap: var(--space-5);
-    }
+    .project-grid-detailed { gap: var(--space-5); }
 }
 
+/* ─── Detailed project card ──────────────────────────────────────────────────*/
 .project-card-full {
     height: 100%;
     display: flex;
     flex-direction: column;
     border-radius: var(--radius-md);
     overflow: hidden;
-    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    transition:
+        transform      var(--transition),
+        box-shadow     var(--transition),
+        border-color   var(--transition);
 }
 
 .project-card-full:hover {
     transform: translateY(-6px);
-    box-shadow: var(--shadow-md), var(--shadow-glow);
-    border-color: rgba(139, 92, 246, 0.25);
+    box-shadow: var(--shadow-md), 0 0 40px rgba(240, 168, 67, 0.14);
+    border-color: rgba(240, 168, 67, 0.28);
 }
 
-.project-image-full {
-    border-radius: 0;
-}
+.project-image-full { border-radius: 0; }
 
-.project-info-full .work-tags {
-    margin-top: var(--space-2);
-}
+.project-info-full .work-tags   { margin-top: var(--space-2); }
 
 .project-info-full .card-actions {
     margin-top: auto;
     padding-top: var(--space-3);
 }
 
+/* ─── Tech icon row ──────────────────────────────────────────────────────────*/
 .project-tech-icons {
     display: flex;
     gap: 12px;
@@ -140,5 +160,8 @@
 .tech-icon {
     width: 24px;
     height: 24px;
-    opacity: 0.7;
+    opacity: 0.65;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
+
+.tech-icon:hover { opacity: 1; transform: scale(1.15); }

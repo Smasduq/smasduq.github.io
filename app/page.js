@@ -78,7 +78,7 @@ export default function HomePage() {
                 />
                 <div className="about-copy">
                   <p>
-                    I am Sadiqu Muhammad Bello, a Fullstack Engineer with 3 years of professional experience building robust digital
+                    I am Sadiqu Muhammad Bello, a 16-year-old Fullstack Engineer with 3 years of professional experience building robust digital
                     products. I bridge the gap between complex engineering requirements and elegant user
                     experiences.
                   </p>

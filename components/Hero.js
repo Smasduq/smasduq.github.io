@@ -30,6 +30,7 @@ export default function Hero() {
   return (
     <section className="hero" ref={heroRef}>
       <div className="hero-grid" aria-hidden="true" />
+      {/* Sunrise blobs: top-left navy sky, bottom-right amber horizon, mid blush */}
       <div className="blob blob-1" />
       <div className="blob blob-2" />
       <div className="blob blob-3" />
