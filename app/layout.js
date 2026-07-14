@@ -1,4 +1,5 @@
 import './globals.css';
+import CursorGlow from '@/components/CursorGlow';
 
 export const metadata = {
   metadataBase: new URL('https://smasduq.github.io'),
@@ -7,12 +8,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      {/*
-        Space Grotesk — body text: geometric, modern, very legible
-        Syne          — headings: bold, distinctive display face with personality
-        Both loaded via globals.css @import; no extra link needed here.
-      */}
-      <body>{children}</body>
+      <body>
+        {/* Ambient cursor glow — auto-disabled on touch devices */}
+        <CursorGlow />
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,5 +1,8 @@
-/* ─── Projects Page — Sunrise Theme ─────────────────────────────────────────*/
+/* ═══════════════════════════════════════════════════════════════════════════
+   PROJECTS PAGE — Solarpunk Terminal theme
+   ══════════════════════════════════════════════════════════════════════════ */
 
+/* ─── Hero ───────────────────────────────────────────────────────────────── */
 .projects-hero {
     position: relative;
     padding: calc(var(--header-height) + var(--space-6)) 0 var(--space-5);
@@ -7,18 +10,20 @@
     overflow: hidden;
 }
 
-.projects-hero .hero-grid { opacity: 0.45; }
+.projects-hero .hero-grid { opacity: 0.4; }
 
-/* Warm amber glow fanning down from the top — like the horizon in the photo */
 .projects-hero-glow {
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 640px;
-    height: 320px;
-    background: radial-gradient(ellipse, rgba(240, 168, 67, 0.22) 0%, rgba(126, 184, 212, 0.08) 55%, transparent 75%);
-    filter: blur(70px);
+    width: 560px;
+    height: 300px;
+    background: radial-gradient(ellipse,
+        rgba(245,166,35,0.18) 0%,
+        rgba(122,184,212,0.07) 50%,
+        transparent 75%);
+    filter: blur(72px);
     opacity: 0.55;
     pointer-events: none;
 }
@@ -30,80 +35,103 @@
     margin: 0 auto;
 }
 
+/* Title: shimmer gradient identical to hero accent */
 .projects-hero h1 {
-    font-size: clamp(2.5rem, 5vw, 3.5rem);
-    line-height: 1.1;
+    font-size: clamp(2.4rem, 5vw, 3.5rem);
+    line-height: 1.08;
     margin-bottom: var(--space-2);
-    /* Sunrise sweep on the page title */
-    background: linear-gradient(110deg, var(--sky-glow) 0%, var(--primary) 30%, var(--accent) 60%, var(--secondary) 100%);
-    background-size: 220% 220%;
+    background: linear-gradient(105deg,
+        var(--sky-horizon) 0%,
+        var(--amber-bright) 25%,
+        var(--sky-blush) 55%,
+        var(--sky-powder) 85%,
+        var(--sky-horizon) 100%);
+    background-size: 300% 100%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: skyShift 10s ease infinite;
+    animation: shimmer 6s linear infinite;
 }
 
-@keyframes skyShift {
-    0%, 100% { background-position: 0%   50%; }
-    50%       { background-position: 100% 50%; }
+@keyframes shimmer {
+    from { background-position: 200% center; }
+    to   { background-position: -200% center; }
 }
 
 .projects-hero .text-muted {
     font-size: 1.05rem;
-    line-height: 1.75;
-    max-width: 600px;
+    line-height: 1.78;
+    max-width: 580px;
     margin: 0 auto;
+    color: var(--text-muted);
 }
 
-/* ─── Gallery section ────────────────────────────────────────────────────────*/
+/* ─── Gallery ────────────────────────────────────────────────────────────── */
 .section--gallery { padding-top: 0; }
 
-/* ─── Filter bar ─────────────────────────────────────────────────────────────*/
+/* ─── Filter bar ─────────────────────────────────────────────────────────── */
 .filter-bar {
     display: flex;
     justify-content: center;
-    gap: var(--space-1);
+    gap: 8px;
     margin-bottom: var(--space-5);
     flex-wrap: wrap;
 }
 
 .filter-btn {
-    background: rgba(240, 168, 67, 0.04);
+    position: relative;
+    background: var(--amber-trace);
     border: 1px solid var(--border);
     color: var(--text-muted);
-    padding: 10px 22px;
+    padding: 9px 20px;
     border-radius: var(--radius-full);
     cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 0.85rem;
-    letter-spacing: 0.02em;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    overflow: hidden;
     transition:
-        background     var(--transition-fast),
-        color          var(--transition-fast),
-        border-color   var(--transition-fast),
-        transform      var(--transition-fast),
-        box-shadow     var(--transition-fast);
+        color        var(--t-fast),
+        border-color var(--t-fast),
+        background   var(--t-fast),
+        transform    var(--t-fast),
+        box-shadow   var(--t-mid);
 }
+
+/* Fill sweep on hover */
+.filter-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--amber-soft);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--t-mid) var(--ease-out);
+    border-radius: inherit;
+    z-index: 0;
+}
+.filter-btn span { position: relative; z-index: 1; }
 
 .filter-btn:hover {
     color: var(--text);
-    border-color: rgba(240, 168, 67, 0.28);
-    background: rgba(240, 168, 67, 0.09);
+    border-color: var(--border-mid);
+    transform: translateY(-1px);
 }
+.filter-btn:hover::before { transform: scaleX(1); }
 
-/* Active state — amber sunrise button */
+/* Active: amber gradient, dark text */
 .filter-btn.active {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-    color: #0b0f1a;
+    background: linear-gradient(130deg, var(--amber-bright), var(--amber-dim));
+    color: #080c14;
     border-color: transparent;
-    box-shadow: 0 4px 18px rgba(240, 168, 67, 0.35);
     font-weight: 700;
+    box-shadow: 0 4px 18px rgba(245,166,35,0.35);
+    transform: translateY(-1px);
 }
+.filter-btn.active::before { display: none; }
 
-.filter-btn.active:hover { transform: translateY(-1px); }
-
-/* ─── Project grid ───────────────────────────────────────────────────────────*/
+/* ─── Project grid ───────────────────────────────────────────────────────── */
 .project-grid-detailed {
     display: grid;
     grid-template-columns: 1fr;
@@ -112,16 +140,15 @@
 
 @media (min-width: 768px) {
     .project-grid-detailed {
-        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         gap: var(--space-4);
     }
 }
-
 @media (min-width: 1024px) {
     .project-grid-detailed { gap: var(--space-5); }
 }
 
-/* ─── Detailed project card ──────────────────────────────────────────────────*/
+/* ─── Detailed project card ──────────────────────────────────────────────── */
 .project-card-full {
     height: 100%;
     display: flex;
@@ -129,39 +156,54 @@
     border-radius: var(--radius-md);
     overflow: hidden;
     transition:
-        transform      var(--transition),
-        box-shadow     var(--transition),
-        border-color   var(--transition);
+        transform    var(--t-mid) var(--ease-out),
+        box-shadow   var(--t-mid),
+        border-color var(--t-mid);
 }
 
 .project-card-full:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-md), 0 0 40px rgba(240, 168, 67, 0.14);
-    border-color: rgba(240, 168, 67, 0.28);
+    transform: translateY(-7px);
+    box-shadow: var(--shadow-md), var(--shadow-amber);
+    border-color: var(--border-mid);
 }
 
 .project-image-full { border-radius: 0; }
 
 .project-info-full .work-tags   { margin-top: var(--space-2); }
-
 .project-info-full .card-actions {
     margin-top: auto;
     padding-top: var(--space-3);
 }
 
-/* ─── Tech icon row ──────────────────────────────────────────────────────────*/
+/* ─── Tech icon row ──────────────────────────────────────────────────────── */
 .project-tech-icons {
     display: flex;
     gap: 12px;
     margin-top: auto;
     padding-top: var(--space-3);
 }
-
 .tech-icon {
-    width: 24px;
-    height: 24px;
-    opacity: 0.65;
-    transition: opacity var(--transition-fast), transform var(--transition-fast);
+    width: 24px; height: 24px;
+    opacity: 0.6;
+    transition: opacity var(--t-fast), transform var(--t-fast);
+}
+.tech-icon:hover { opacity: 1; transform: scale(1.15); }
+
+/* ─── Mobile overrides ───────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+    .projects-hero {
+        padding: calc(var(--header-height) + var(--space-4)) 0 var(--space-3);
+    }
+    .projects-hero h1 { font-size: clamp(1.8rem, 8vw, 2.5rem); }
+    .projects-hero .text-muted { font-size: 0.97rem; }
+
+    .project-grid-detailed { grid-template-columns: 1fr; gap: var(--space-3); }
+
+    .filter-bar { gap: 6px; margin-bottom: var(--space-4); }
+    .filter-btn { padding: 7px 15px; font-size: 0.72rem; }
 }
 
-.tech-icon:hover { opacity: 1; transform: scale(1.15); }
+@media (max-width: 374px) {
+    .projects-hero h1 { font-size: clamp(1.5rem, 9vw, 2rem); }
+    .filter-btn       { padding: 6px 12px; font-size: 0.68rem; }
+}
