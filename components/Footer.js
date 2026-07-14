@@ -31,8 +31,8 @@ export default function Footer({ variant = 'home' }) {
             <a href="https://www.linkedin.com/in/smasduq" className="social-link" target="_blank" rel="noopener noreferrer">
               LinkedIn
             </a>
-            <a href="#" className="social-link">
-              Twitter
+            <a href="https://x.com/smasduq_" className="social-link" target="_blank" rel="noopener noreferrer">
+              X / Twitter
             </a>
           </div>
         </div>
