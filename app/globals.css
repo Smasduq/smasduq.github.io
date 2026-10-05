@@ -470,11 +470,15 @@ ul { list-style: none; }
 @media (min-width: 1024px) { .baby-placeholder { width: 380px; } }
 .baby-svg { width: 100%; height: auto; display: block; overflow: visible; }
 
-/* breathing */
-.baby-bob { animation: babyBob 4.2s ease-in-out infinite; }
+/* breathing lives on the outer wrapper; JS posture lean on .baby-bob */
+.baby-breathe { animation: babyBob 4.6s ease-in-out infinite; }
 @keyframes babyBob {
   0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-9px); }
+  50%       { transform: translateY(-8px); }
+}
+.baby-bob {
+  transform-box: view-box;
+  transform-origin: 170px 300px;
 }
 .baby-shadow {
   transform-box: view-box;
@@ -493,15 +497,18 @@ ul { list-style: none; }
 }
 .baby-pupils { transform: translate(var(--px, 0px), var(--py, 0px)); }
 
-/* blink: eyes squash briefly every ~5s (pupils ride along inside) */
+/* blinks are JS-scheduled (irregular timing); expressions scale the eyes */
 .baby-eyes {
   transform-box: view-box;
-  transform-origin: 170px 188px;
-  animation: babyBlink 5.2s infinite;
+  transform-origin: 170px 189px;
+  transition: transform 0.22s ease;
 }
-@keyframes babyBlink {
-  0%, 93%, 100% { transform: scaleY(1); }
-  95.5%          { transform: scaleY(0.06); }
+.expr-surprised .baby-eyes { transform: scale(1.06, 1.14); }
+.expr-confused .baby-eyes { transform: scale(0.95, 0.9); }
+.expr-sleepy .baby-eyes { transform: scale(1.02, 0.92); }
+.baby-lids {
+  transform-box: view-box;
+  transform-origin: 170px 189px;
 }
 
 /* wave: right arm swings up and wiggles */
@@ -520,11 +527,41 @@ ul { list-style: none; }
   100% { transform: rotate(0deg); }
 }
 
-/* excited: open smile + little hop (triggered by CTA hover) */
-.smile-calm { transition: opacity var(--t-fast); }
-.smile-happy { opacity: 0; transition: opacity var(--t-fast); }
-.baby-stage.excited .smile-calm { opacity: 0; }
-.baby-stage.excited .smile-happy { opacity: 1; }
+/* left arm twitches on its own sometimes */
+.baby-arm-l {
+  transform-box: view-box;
+  transform-origin: 100px 268px;
+}
+.baby-stage.twitching .baby-arm-l { animation: armTwitch 0.55s ease; }
+@keyframes armTwitch {
+  0%, 100% { transform: rotate(0deg); }
+  30%       { transform: rotate(-14deg); }
+  60%       { transform: rotate(6deg); }
+}
+
+/* mouths — JS picks one mood at a time; excited = genuine smile */
+.mouth { opacity: 0; transition: opacity 0.18s ease; }
+.mouth-smirk { opacity: 1; }
+.expr-surprised .mouth-smirk,
+.expr-confused .mouth-smirk,
+.expr-sleepy .mouth-smirk,
+.baby-stage.excited .mouth-smirk { opacity: 0; }
+.expr-surprised .mouth-o { opacity: 1; }
+.expr-confused .mouth-flat,
+.expr-sleepy .mouth-flat { opacity: 1; }
+.baby-stage.excited .mouth-smile { opacity: 1; }
+
+/* sleepy Zzz drift */
+.baby-zzz { opacity: 0; }
+.expr-sleepy .baby-zzz { animation: zzzFloat 3s ease-in-out infinite; }
+.expr-sleepy .baby-zzz--2 { animation-delay: 1.1s; }
+@keyframes zzzFloat {
+  0%   { opacity: 0; transform: translate(0, 0); }
+  25%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(14px, -26px); }
+}
+
+/* excited: little hop (triggered by CTA hover) */
 .baby-stage.excited .baby-svg { animation: babyJump 0.45s ease 2; }
 @keyframes babyJump {
   0%, 100% { transform: translateY(0); }
@@ -640,6 +677,24 @@ ul { list-style: none; }
   transition: transform var(--t-mid) var(--ease);
 }
 .project-panel:hover .panel-visual-inner { transform: translateY(-4px) scale(1.02); }
+
+/* Real project screenshots fill the panel visual */
+.panel-shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+.modal-shot {
+  display: block;
+  width: 100%;
+  max-height: 380px;
+  object-fit: cover;
+  object-position: top center;
+  border-bottom: 1px solid var(--border);
+}
 .panel-logo {
   max-width: 220px;
   max-height: 120px;

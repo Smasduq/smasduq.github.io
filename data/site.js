@@ -49,6 +49,8 @@ export const TECHNOLOGIES = [
     category: 'Shipping',
     items: [
       { name: 'Vercel', note: 'Hosting for fast-loading frontends.' },
+      { name: 'AWS', note: 'Cloud infrastructure.' },
+      { name: 'Oracle', note: 'Cloud hosting (OCI).' },
       { name: 'Linux', note: 'Native packaging target for Ani-pull.' },
       { name: 'Git', note: 'Version control across every project.' },
     ],

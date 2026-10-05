@@ -3,7 +3,72 @@
 import { useCallback, useEffect, useState } from 'react';
 import { PROJECTS } from '@/data/projects';
 
+/**
+ * Real screenshot with graceful fallback: if the remote image fails
+ * (offline, rate-limited, renamed), the abstract mock renders instead.
+ * The site never shows a broken image.
+ */
+function Screenshot({ project, fallback, className = 'panel-shot' }) {
+  const [failed, setFailed] = useState(false);
+  if (!project.screenshot || failed) return fallback;
+  return (
+    <img
+      src={project.screenshot}
+      alt={`${project.name} — actual interface screenshot`}
+      className={className}
+      loading="lazy"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
+function SongnestMock() {
+  return (
+    <div className="panel-visual-inner">
+      <div className="panel-mock" aria-hidden="true">
+        <div className="panel-mock-bar"><i /><i /><i /></div>
+        {[0, 1, 2].map((row) => (
+          <div className="panel-mock-row" key={row}>
+            <span className="panel-mock-thumb" />
+            <span className="panel-mock-lines"><b /><b /></span>
+          </div>
+        ))}
+        <div className="scene-bar"><b style={{ width: '38%' }} /></div>
+      </div>
+    </div>
+  );
+}
+
+function IfreeyuhMock() {
+  return (
+    <div className="panel-visual-inner">
+      <div className="statusbar-mock" aria-hidden="true">
+        <span className="statusbar-pills"><i className="on" /><i /><i /></span>
+        <span className="statusbar-title" />
+        <span className="statusbar-stats"><b /><b /><b /></span>
+      </div>
+    </div>
+  );
+}
+
 function Visual({ project }) {
+  // Real screenshots win wherever one exists; logo/wordmark is the fallback.
+  if (project.screenshot) {
+    return (
+      <Screenshot
+        project={project}
+        fallback={
+          <div className="panel-visual-inner">
+            {project.logo ? (
+              <img src={project.logo} alt={`${project.name} logo`} className="panel-logo" loading="lazy" />
+            ) : (
+              <span className="panel-wordmark">{project.imageLabel}</span>
+            )}
+          </div>
+        }
+      />
+    );
+  }
   if (project.logo) {
     return (
       <div className="panel-visual-inner">
@@ -12,21 +77,10 @@ function Visual({ project }) {
     );
   }
   if (project.id === 'songnest') {
-    // Abstract player UI —-tasteful mock, not a fake screenshot.
-    return (
-      <div className="panel-visual-inner">
-        <div className="panel-mock" aria-hidden="true">
-          <div className="panel-mock-bar"><i /><i /><i /></div>
-          {[0, 1, 2].map((row) => (
-            <div className="panel-mock-row" key={row}>
-              <span className="panel-mock-thumb" />
-              <span className="panel-mock-lines"><b /><b /></span>
-            </div>
-          ))}
-          <div className="scene-bar"><b style={{ width: '38%' }} /></div>
-        </div>
-      </div>
-    );
+    return <Screenshot project={project} fallback={<SongnestMock />} />;
+  }
+  if (project.id === 'ifreeyuh') {
+    return <Screenshot project={project} fallback={<IfreeyuhMock />} />;
   }
   if (project.id === 'git-pixel') {
     // Abstract contribution-grid canvas.
@@ -60,15 +114,7 @@ function Visual({ project }) {
   }
   if (project.id === 'ifreeyuh') {
     // Abstract status-bar UI — tasteful mock, not a fake screenshot.
-    return (
-      <div className="panel-visual-inner">
-        <div className="statusbar-mock" aria-hidden="true">
-          <span className="statusbar-pills"><i className="on" /><i /><i /></span>
-          <span className="statusbar-title" />
-          <span className="statusbar-stats"><b /><b /><b /></span>
-        </div>
-      </div>
-    );
+    return <IfreeyuhMock />;
   }
   if (project.id === 'ani-pull') {
     return (
@@ -112,9 +158,13 @@ function DetailModal({ project, onClose }) {
         aria-labelledby={`modal-${project.id}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="modal-visual" style={{ background: project.gradient }}>
-          <Visual project={project} />
-        </div>
+        {project.screenshot ? (
+          <Screenshot project={project} className="modal-shot" fallback={null} />
+        ) : (
+          <div className="modal-visual" style={{ background: project.gradient }}>
+            <Visual project={project} />
+          </div>
+        )}
         <div className="modal-body">
           <button type="button" className="modal-close" onClick={onClose}>
             ← Back to work

@@ -17,6 +17,7 @@ export const PROJECTS = [
     meta: 'Fullstack Platform',
     imageLabel: 'MONTEEQ',
     logo: '/img/monteeq-logo.png',
+    screenshot: '/img/monteeq-dashboard.png',
     github: null, // no public repo URL verified — kept null rather than invented
     demo: 'https://monteeq.com',
     featured: true,
@@ -55,6 +56,7 @@ export const PROJECTS = [
     meta: 'Desktop App',
     imageLabel: 'SONGNEST',
     logo: null,
+    screenshot: 'https://raw.githubusercontent.com/Smasduq/songnest/main/docs/screenshots/desktop-library.png',
     github: 'https://github.com/Smasduq/songnest',
     demo: null, // no live URL published on the repo — kept null rather than invented
     featured: false,
@@ -74,6 +76,7 @@ export const PROJECTS = [
     meta: 'Fullstack Application',
     imageLabel: 'LINKBIO',
     logo: '/img/linkbio-logo.png',
+    screenshot: '/img/linkbio-dashboard.png',
     github: 'https://github.com/Smasduq/link-in-bio',
     demo: 'https://link.smasduq.xyz',
     featured: false,
@@ -112,6 +115,7 @@ export const PROJECTS = [
     meta: 'Linux Desktop',
     imageLabel: 'IFREEYUH',
     logo: null,
+    screenshot: 'https://raw.githubusercontent.com/Smasduq/ifreeyuh/main/assets/screenshot.png',
     github: 'https://github.com/Smasduq/ifreeyuh',
     demo: null,
     featured: false,
