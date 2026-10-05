@@ -1,7 +1,7 @@
 export default function ContactForm() {
   return (
     <form
-      className="contact-form card reveal"
+      className="contact-form reveal"
       action="https://formspree.io/f/xdkjbpja"
       method="POST"
     >

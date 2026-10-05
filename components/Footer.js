@@ -1,44 +1,30 @@
 import Link from 'next/link';
 import BackToTop from '@/components/BackToTop';
+import { SOCIALS } from '@/data/site';
 
 export default function Footer({ variant = 'home' }) {
-  if (variant === 'projects') {
-    return (
-      <footer className="site-footer site-footer--projects">
-        <div className="container footer-container">
-          <div className="footer-bottom">
-            <p className="copyright">&copy; 2026 Sadiqu Muhammad Bello. Built for performance.</p>
-            <BackToTop />
-          </div>
-        </div>
-      </footer>
-    );
-  }
-
   return (
-    <footer className="site-footer">
-      <div className="container footer-container">
-        <div className="footer-top">
-          <div className="footer-brand">
-            <Link href="/" className="logo footer-logo">SMASDUQ</Link>
-            <p className="footer-tagline">Fullstack Engineer &amp; Solutions Architect</p>
+    <footer className={`site-footer${variant === 'projects' ? ' site-footer--projects' : ''}`}>
+      <div className="container">
+        {variant === 'home' && (
+          <div className="footer-top">
+            <div>
+              <Link href="/" className="logo" aria-label="Smasduq — home">
+                SMAS<em>DUQ</em>
+              </Link>
+              <p className="footer-tagline">Software developer · Founder · Product builder</p>
+            </div>
+            <div className="social-links" aria-label="Social links">
+              {SOCIALS.map((s) => (
+                <a key={s.label} href={s.href} className="social-link" target="_blank" rel="noopener noreferrer">
+                  {s.label}
+                </a>
+              ))}
+            </div>
           </div>
-
-          <div className="social-links" aria-label="Social links">
-            <a href="https://github.com/Smasduq" className="social-link" target="_blank" rel="noopener noreferrer">
-              GitHub
-            </a>
-            <a href="https://www.linkedin.com/in/smasduq" className="social-link" target="_blank" rel="noopener noreferrer">
-              LinkedIn
-            </a>
-            <a href="https://x.com/smasduq_" className="social-link" target="_blank" rel="noopener noreferrer">
-              X / Twitter
-            </a>
-          </div>
-        </div>
-
+        )}
         <div className="footer-bottom">
-          <p className="copyright">&copy; 2026 Sadiqu Muhammad Bello. All rights reserved. Crafted with precision.</p>
+          <p className="copyright">© 2026 Smasduq — Built with React · Designed &amp; developed by Smasduq</p>
           <BackToTop />
         </div>
       </div>
