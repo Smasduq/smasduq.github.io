@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { NAV_LINKS } from '@/data/site';
 
@@ -26,6 +26,8 @@ export default function Header({ variant = 'home' }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState('');
+  const toggleRef = useRef(null);
+  const menuRef = useRef(null);
   const isHome = variant === 'home';
 
   useEffect(() => {
@@ -57,6 +59,51 @@ export default function Header({ variant = 'home' }) {
   }, [isHome]);
 
   const close = () => setMenuOpen(false);
+
+  // mac-menu keyboard support: arrows move, Enter opens, Esc closes
+  const onMenuKeyDown = (e) => {
+    const items = Array.from(
+      menuRef.current?.querySelectorAll('[role="menuitem"]') || [],
+    );
+    const i = items.indexOf(document.activeElement);
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      close();
+      toggleRef.current?.focus();
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      (items[i + 1] || items[0])?.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      (items[i - 1] || items[items.length - 1])?.focus();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      items[0]?.focus();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      items[items.length - 1]?.focus();
+    }
+  };
+
+  useEffect(() => {
+    if (menuOpen) {
+      menuRef.current?.querySelector('[role="menuitem"]')?.focus();
+    }
+  }, [menuOpen]);
+
+  const mobileItemProps = (isActive) => ({
+    role: 'menuitem',
+    tabIndex: menuOpen ? 0 : -1,
+    className: `mobile-link${isActive ? ' active' : ''}`,
+    onClick: close,
+  });
+
+  const renderCheck = (isActive) =>
+    isActive ? (
+      <span className="mac-check" aria-hidden="true">
+        ✓
+      </span>
+    ) : null;
 
   return (
     <>
@@ -92,9 +139,11 @@ export default function Header({ variant = 'home' }) {
           <button
             className="menu-toggle"
             type="button"
+            ref={toggleRef}
             onClick={() => setMenuOpen((o) => !o)}
             aria-expanded={menuOpen}
             aria-controls="mobileNav"
+            aria-haspopup="menu"
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           >
             <MenuIcon open={menuOpen} />
@@ -105,23 +154,52 @@ export default function Header({ variant = 'home' }) {
       <div
         className={`mobile-nav${menuOpen ? ' active' : ''}`}
         id="mobileNav"
-        role="dialog"
-        aria-label="Mobile navigation"
+        ref={menuRef}
+        role="menu"
+        aria-label="Site menu"
         aria-hidden={!menuOpen}
+        onKeyDown={onMenuKeyDown}
       >
+        <div className="mac-menu-bar" aria-hidden="true">
+          <span className="mac-lights">
+            <i className="r" />
+            <i className="y" />
+            <i className="g" />
+          </span>
+          <span className="mac-menu-title">smasduq</span>
+        </div>
         {isHome ? (
-          NAV_LINKS.map((l) => (
-            <a key={l.id} href={l.href} onClick={close} className={`mobile-link${active === l.id ? ' active' : ''}`}>
-              {l.label}
-            </a>
-          ))
+          NAV_LINKS.map((l) => {
+            const isActive = active === l.id;
+            return (
+              <a key={l.id} href={l.href} {...mobileItemProps(isActive)}>
+                <span>{l.label}</span>
+                {renderCheck(isActive)}
+              </a>
+            );
+          })
         ) : (
           <>
-            <Link href="/" className="mobile-link" onClick={close}>Home</Link>
-            <Link href="/projects" className="mobile-link active" onClick={close}>Projects</Link>
-            <Link href="/#contact" className="mobile-link" onClick={close}>Contact</Link>
+            <Link href="/" {...mobileItemProps(false)}>
+              <span>Home</span>
+            </Link>
+            <Link href="/projects" {...mobileItemProps(true)}>
+              <span>Projects</span>
+              {renderCheck(true)}
+            </Link>
+            <Link href="/#contact" {...mobileItemProps(false)}>
+              <span>Contact</span>
+            </Link>
           </>
         )}
+        <div className="mac-sep" role="separator" aria-hidden="true" />
+        <a
+          href={isHome ? '#contact' : '/#contact'}
+          {...mobileItemProps(false)}
+        >
+          <span>Get in touch</span>
+          <span aria-hidden="true">→</span>
+        </a>
       </div>
 
       {menuOpen && (

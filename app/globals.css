@@ -306,36 +306,103 @@ ul { list-style: none; }
   z-index: 104;
   cursor: pointer;
 }
+/* macOS-style menu, opening like an app launch: centered, springs in */
 .mobile-nav {
   position: fixed;
-  top: 76px; right: 16px; left: 16px;
-  max-width: 360px;
-  margin-left: auto;
-  background: rgba(10, 14, 12, 0.97);
-  backdrop-filter: blur(24px);
-  border: 1px solid var(--border-mid);
-  border-radius: var(--r-lg);
+  top: 50%; left: 50%;
+  width: min(340px, calc(100vw - 32px));
+  max-height: min(70vh, 560px);
+  overflow-y: auto;
+  background: rgba(28, 30, 29, 0.72);
+  backdrop-filter: blur(30px) saturate(1.6);
+  -webkit-backdrop-filter: blur(30px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
   z-index: 105;
   display: flex;
   flex-direction: column;
-  padding: 12px;
-  gap: 2px;
+  padding: 8px;
+  gap: 1px;
   opacity: 0;
-  transform: translateY(-12px) scale(0.98);
+  visibility: hidden;
+  transform: translate(-50%, -46%) scale(0.82);
+  transform-origin: center;
   pointer-events: none;
-  transition: opacity var(--t-mid), transform var(--t-mid) var(--ease);
-  box-shadow: var(--shadow-lg);
+  transition:
+    opacity 180ms ease-out,
+    transform 380ms cubic-bezier(0.34, 1.28, 0.5, 1),
+    visibility 0s linear 380ms;
+  box-shadow:
+    0 32px 96px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
-.mobile-nav.active { opacity: 1; transform: none; pointer-events: all; }
-.mobile-link {
-  font-size: 1rem;
+.mobile-nav.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: all;
+  transition:
+    opacity 150ms ease-out,
+    transform 420ms cubic-bezier(0.34, 1.28, 0.5, 1);
+}
+/* app-grid style staggered entrance, like icons popping into Launchpad */
+.mobile-nav.active > * { animation: menuPop 320ms cubic-bezier(0.2, 0.9, 0.3, 1.15) both; }
+.mobile-nav.active > *:nth-child(1) { animation-delay: 30ms; }
+.mobile-nav.active > *:nth-child(2) { animation-delay: 60ms; }
+.mobile-nav.active > *:nth-child(3) { animation-delay: 90ms; }
+.mobile-nav.active > *:nth-child(4) { animation-delay: 120ms; }
+.mobile-nav.active > *:nth-child(5) { animation-delay: 150ms; }
+.mobile-nav.active > *:nth-child(6) { animation-delay: 180ms; }
+.mobile-nav.active > *:nth-child(7) { animation-delay: 210ms; }
+.mobile-nav.active > *:nth-child(8) { animation-delay: 240ms; }
+@keyframes menuPop {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+/* toggle presses like an app icon */
+.menu-toggle { transition: transform var(--t-fast) var(--ease), background var(--t-fast), border-color var(--t-fast); }
+.menu-toggle:active { transform: scale(0.88); }
+.mac-menu-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 6px;
+}
+.mac-lights { display: flex; gap: 7px; }
+.mac-lights i { width: 11px; height: 11px; border-radius: 50%; }
+.mac-lights .r { background: #FF5F57; }
+.mac-lights .y { background: #FEBC2E; }
+.mac-lights .g { background: #28C840; }
+.mac-menu-title {
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--text-2);
-  padding: 13px 16px;
-  border-radius: var(--r-sm);
+  letter-spacing: 0.01em;
+}
+.mac-sep {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.09);
+  margin: 5px 10px;
+}
+.mobile-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 8px;
   transition: background var(--t-fast), color var(--t-fast);
 }
-.mobile-link:hover, .mobile-link.active { color: var(--accent-bright); background: var(--accent-trace); }
+.mobile-link:hover, .mobile-link:focus-visible {
+  background: var(--accent);
+  color: #04120c;
+  outline: none;
+}
+.mobile-link.active { font-weight: 600; }
+.mac-check { font-weight: 700; font-size: 0.85rem; }
 
 /* ── Hero ───────────────────────────────── */
 .hero {
